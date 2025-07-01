@@ -1,105 +1,93 @@
-baseURL: "https://FabriDeCastelli.github.io/" 
+# baseURL: "https://FabriDeCastelli.github.io/"
+baseURL: https://pascalmichaillat.org/hugo-website/
 title: Fabrizio De Castelli
 theme: PaperMod
 
 enableInlineShortcodes: true
 enableRobotsTXT: true
+
 pagination:
   pagerSize: 20
 
 taxonomies:
-    tag: tags
-
-menu:
-    main:
-        - name: Books
-          url: books/
-          weight: 5 
-        - name: Papers
-          url: papers/
-          weight: 2
-        - name: Courses
-          url: courses/
-          weight: 3
-        - name: Data
-          url: data/
-          weight: 4 
+  tag: tags
+    
 
 params:
-    description: "This website hosts Fabrizio De Castelli's academic profile."
-    author: Fabrizio De Castelli
-    # googleAnalyticsID: "G-XXXXX"
-    DateFormat: "January 2006"
-    defaultTheme: light
-    hideFooter: false
-    disableThemeToggle: true
-    ShowShareButtons: false
-    ShowReadingTime: false
-    disableSpecial1stPost: true
-    disableAnchoredHeadings: true
-    ShowPostNavLinks: false
-    ShowBreadCrumbs: false
-    ShowCodeCopyButtons: true
-    ShowAllPagesInArchive: false
-    MainSections: ["courses"]
-    ShowToc: false
-    disableScrollToTop: true
-    TocOpen: true
-    ShowWordCount: false
-    UseHugoToc: true
-    comments: false
-    math: true
-    profileMode:
-          enabled: true
-          title: Fabrizio De Castelli
-          subtitle: "I am MSc student at the Unviersity of Pisa"
-          imageUrl: "profile.jpeg"
-          imageWidth: 160
-          imageHeight: 160
-          buttons:
-            - name: Papers
-              url: papers/
-            - name: Data
-              url: data/
-            - name: Books
-              url: books/
-            - name: Courses
-              url: courses/
-            - name: Tags
-              url: tags/
-            - name: Archive
-              url: archive/
+  author: Fabrizio De Castelli
+  description: "This website hosts Fabrizio De Castelli's academic profile and projects in AI, ML, and cognitive science."
 
-    socialIcons:
-        - name: CV
-          url: cv.pdf
-        - name: Email
-          url: mailto:decastellifabrizio@gmail.com
-        - name: Location
-          url: location/
-        - name: Google Scholar
-          url: https://scholar.google.com/citations?user=cL23w-4AAAAJ
-        - name: GitHub
-          url: https://github.com/FabriDeCastelli
+  DateFormat: "January 2006"
+  defaultTheme: light
+  hideFooter: false
+  disableThemeToggle: true
 
-    assets:
-        disableScrollBarStyle: true
-    cover:
-        hiddenInList: false
-        hiddenInSingle: true
-    label:
-      text: "Fabrizio De Castelli"
-      icon: favicon.ico
-      iconHeight: 18
+  # Appearance and functionality
+  ShowShareButtons: false
+  ShowReadingTime: false
+  disableSpecial1stPost: true
+  disableAnchoredHeadings: true
+  ShowPostNavLinks: false
+  ShowBreadCrumbs: false
+  ShowCodeCopyButtons: true
+  ShowAllPagesInArchive: false
+  ShowToc: false
+  disableScrollToTop: true
+  TocOpen: true
+  ShowWordCount: false
+  UseHugoToc: true
+
+  comments: false
+  math: true
+
+  profileMode:
+    enabled: true
+    title: Fabrizio De Castelli
+    subtitle: >
+      I am a MSc student in Computer Science at the Computer Science Department, University of Pisa.
+    imageUrl: "profile.jpeg"
+    imageWidth: 160
+    imageHeight: 160
+    buttons:
+      - name: CV
+        url: cv.pdf
+      - name: About
+        url: about/
+      - name: Interests
+        url: interests/
+      - name: Projects
+        url: projects/
+      - name: Contact
+        url: contact/
+
+  socialIcons:
+    - name: Email
+      url: mailto:decastellifabrizio@gmail.com
+    - name: GitHub
+      url: https://github.com/FabriDeCastelli
+    - name: CV
+      url: cv.pdf
+
+  label:
+    text: "Fabrizio De Castelli"
+    icon: favicon.ico
+    iconHeight: 18
+
+  assets:
+    disableScrollBarStyle: true
+
+  cover:
+    hiddenInList: false
+    hiddenInSingle: true
 
 markup:
-    goldmark:
-        renderer:
-            unsafe: true
-    highlight:
-        guessSyntax: true
-        style: autumn 
-    tableOfContents:
-        endLevel: 2
-        ordered: false
-        startLevel: 2
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    guessSyntax: true
+    style: autumn
+  tableOfContents:
+    endLevel: 2
+    ordered: false
+    startLevel: 2
