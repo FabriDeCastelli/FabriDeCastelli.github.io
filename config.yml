@@ -1,5 +1,5 @@
-# baseURL: "https://FabriDeCastelli.github.io/"
-baseURL: https://pascalmichaillat.org/hugo-website/
+baseURL: "https://FabriDeCastelli.github.io/"
+# baseURL: https://pascalmichaillat.org/hugo-website/
 title: Fabrizio De Castelli
 theme: PaperMod
 
