@@ -39,7 +39,7 @@ params:
   defaultTheme: light
   hideFooter: false
   disableThemeToggle: true
-  mainSections: ["projects"]
+  MainSections: ["projects"]
 
   # Appearance and functionality
   ShowShareButtons: false
