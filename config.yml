@@ -1,26 +1,45 @@
 baseURL: "https://FabriDeCastelli.github.io/"
-# baseURL: https://pascalmichaillat.org/hugo-website/
 title: Fabrizio De Castelli
 theme: PaperMod
 
 enableInlineShortcodes: true
 enableRobotsTXT: true
+ShowAllPagesInArchive: true
 
 pagination:
   pagerSize: 20
 
 taxonomies:
   tag: tags
+
+menu:
+  main:
+    - name: Projects
+      url: projects/
+      weight: 3
+    - name: Interests
+      url: interests/
+      weight: 4
+    - name: About
+      url: about/
+      weight: 5  
+    - name: Contact
+      url: contact/
+      weight: 6
+    - name: CV
+      url: cv.pdf
+      weight: 7
     
 
 params:
   author: Fabrizio De Castelli
-  description: "This website hosts Fabrizio De Castelli's academic profile and projects in AI, ML, and cognitive science."
+  description: "This website hosts Fabrizio De Castelli's personal information."
 
   DateFormat: "January 2006"
   defaultTheme: light
   hideFooter: false
   disableThemeToggle: true
+  mainSections: ["projects"]
 
   # Appearance and functionality
   ShowShareButtons: false
@@ -39,6 +58,7 @@ params:
 
   comments: false
   math: true
+
 
   profileMode:
     enabled: true
