@@ -1,6 +1,6 @@
 ---
 layout: archive
-title: "CV"
+title: "Curriculum Vitae"
 permalink: /cv/
 author_profile: true
 redirect_from:
@@ -9,56 +9,96 @@ redirect_from:
 
 {% include base_path %}
 
-Education
-======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
+---
 
-Work experience
-======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
+## Education
+* **Ph.D. in Computer Science**, [University of Pisa](https://www.unipi.it) — *Nov 2025 – Present*  
+  *Supervisor: [Prof. Davide Bacciu](https://pages.di.unipi.it/bacciu/)*  
 
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+* **M.Sc. in Computer Science**, [University of Pisa](https://www.unipi.it) — *Jan 2024 – Oct 2025*  
+  *Final Grade:* **110/110 *cum laude*** (Highest Honors)  
+  *Major:* Artificial Intelligence  
+  *Specialization:* Dynamical Systems, Graph Learning, Optimization  
+  **Thesis** *(in collaboration with [University of Cambridge](https://www.cam.ac.uk)):*  
+  *Adaptive Dissipativity in Dynamic Graph Models*
 
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-  
-Skills
-======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+* **B.Sc. in Computer Science**, [University of Pisa](https://www.unipi.it) — *Sep 2020 – Dec 2023*  
+  *Final Grade:* **110/110 *cum laude*** (Highest Honors)  
+  *Specialization:* Algorithms, Calculus, Optimization, Machine Learning  
+  **Thesis** *(in collaboration with [CNR](https://www.cnr.it)):*  
+  *Learned Sparse Representations for Fast Approximate Retrieval*
 
-Publications
-======
-  <ul>{% for post in site.publications reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks reversed %}
-    {% include archive-single-talk-cv.html  %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
-======
-* Currently signed in to 43 different slack teams
+* **Mobility Student**, [Università della Svizzera italiana (USI)](https://www.usi.ch) — *Sep 2022 – Jul 2023*  
+  *[SEMP Merit Scholarship](https://erasmusgeneration.org/mobility/swiss-european-mobility-programme-semp)*  
+  *Specialization:* Software Engineering, Machine Learning, Reinforcement Learning
+
+---
+
+## Work Experience
+
+* **Software Developer**, [Industrial Software srl](https://industrialsoftware.it) — *Jan – Feb 2019*  
+  Development and testing of home automation software in **C#**
+
+* **Freelance Developer** — *Apr 2022 – Jan 2025*  
+  Designed and developed multiple websites with **WordPress**
+
+* **Mathematics Teacher** — *Feb 2025 – May 2025*  
+  NRRP program for national academic support in Mathematics
+
+---
+
+## Talks
+
+* **Graphs in Motion: Learning from the Pulse of Dynamical Systems**  
+  Presented at [ETH Zürich](https://ethz.ch), VIScon Symposium — *Oct 2025*
+
+---
+
+## Projects
+
+* **[JourneyTales](https://gitlab.com/usi-si-oss/teaching/projects-showcase/sa4/team-4-pufferfish)** — Full Stack + DevOps  
+  Social media platform to share travel experiences, with friendship mechanisms and real-time notifications.  
+  *(Vue.js, Node.js, Docker, GitLab CI/CD)*
+
+## Hackathons
+
+* **[Credem - Google Hackathon 2025](https://www.credem.it)** — *3rd Place*  
+  Used Optical Character Recognition and LLMs to extract and classify sensitive content from private banking documents.
+
+* **[Neural Wave Hackathon 2024](https://neuralwave.ch)**  
+  Developed a corner detector and performed patch classification with Deep CNN achieving $$F_{0.5}\text{-score} > 0.96$$ (PyTorch Lightning).
+
+* **[ETH - Analytics Club Datathon 2025](https://datathon.ai)**  
+  Developed a Retrieval Augmented Generation system with a Knowledge Base and geospatial features for the supply chain on over $$300k$$ raw HTML pages. The solution included an interactive user interface, integrated with a Database.
+
+---
+
+## Merits and Acknowledgements
+
+* **AI Cup 2022 (USI)** — Runner-up  
+  Optimized Ant Colony System for the Traveling Salesman Problem in **C**. Tested on well-known swiss benchmarks.
+
+* **[Swiss European Mobility Programme (SEMP)](https://erasmusgeneration.org/mobility/swiss-european-mobility-programme-semp)** — Merit scholarship  
+  GPA at application: 6/6
+
+---
+
+## Skills
+
+* **Languages & Frameworks:** Python, Java, Rust, C++, PyTorch, PyTorch Geometric, Sklearn, Numpy, Pandas, Keras, TensorFlow  
+* **Web & DevOps:** WordPress, Docker, GitLab CI/CD  
+* **Tools & Concepts:** MLOps, Git, Agile Development, OOP, Functional Programming  
+* **Languages**  
+  - English — Fluent (with Certificates)  
+  - Italian — Native  
+  - French — Basic  
+
+
+---
+
+## Documents
+
+* Italian Citizenship (EU)  
+* Driving Licence B  
+
+---
