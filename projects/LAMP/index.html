@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAMP — Long-range Adaptive Memory Propagation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0b0f; --panel:#14141b; --panel2:#1c1c26; --line:rgba(255,255,255,.09);
+  --line2:rgba(255,255,255,.18); --text:#f3f1ea; --muted:#a3a199; --faint:#6c6a64;
+  --warm:#ffb648; --warm-dim:#7a5418; --info:#5aa9ff; --teal:#4fd3a8;
+  --red:#e24b4a; --green:#7bbf3a; --blue:#4f97e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text); font-family:'Manrope',sans-serif;
+  line-height:1.65; overflow-x:hidden;
+  background-image:radial-gradient(circle at 50% -10%, rgba(255,182,72,.10), transparent 55%);
+}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px;position:relative;z-index:2}
+section{padding:64px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:none}
+
+/* ---------- HERO + SPOTLIGHT ---------- */
+.hero{padding:80px 0 70px;text-align:center;position:relative;overflow:hidden}
+/* the sweeping spotlight cone behind everything */
+.spot{position:absolute;top:-60px;left:50%;width:520px;height:560px;margin-left:-260px;z-index:0;pointer-events:none;
+  transform-origin:50% 8%;animation:sweep 7s ease-in-out infinite;}
+.spot::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 60% at 50% 0%, rgba(255,182,72,.34), rgba(255,182,72,.10) 42%, transparent 72%);
+  clip-path:polygon(50% 0%, 8% 100%, 92% 100%);filter:blur(2px);}
+@keyframes sweep{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+.hero-inner{position:relative;z-index:1}
+.lamp-svg{width:172px;height:auto;margin:0 auto -6px;display:block;filter:drop-shadow(0 0 40px rgba(255,182,72,.35))}
+.badge{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;
+  text-transform:uppercase;color:#1a1205;background:var(--warm);padding:6px 16px;border-radius:30px;margin-bottom:22px;font-weight:700;
+  box-shadow:0 0 26px rgba(255,182,72,.5)}
+.title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(46px,9vw,84px);letter-spacing:-.02em;line-height:.95}
+.title .glow{color:var(--warm);text-shadow:0 0 34px rgba(255,182,72,.6)}
+.sub{font-family:'Space Mono',monospace;color:var(--muted);font-size:13px;letter-spacing:.18em;text-transform:uppercase;margin-top:14px}
+.tag{max-width:620px;margin:22px auto 0;color:var(--muted);font-size:17px}
+.authors{margin-top:26px;color:var(--faint);font-size:13.5px;font-family:'Space Mono',monospace}
+.btns{margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.05em;text-decoration:none;color:var(--text);
+  border:1px solid var(--line2);padding:11px 20px;border-radius:10px;transition:.18s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:var(--panel2);border-color:var(--warm);color:var(--warm)}
+.btn.primary{background:var(--warm);color:#1a1205;border-color:var(--warm);font-weight:700}
+.btn.primary:hover{background:#ffc874;color:#1a1205}
+
+h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,5vw,38px);letter-spacing:-.01em;margin-bottom:8px}
+.lead{color:var(--muted);font-size:16px;max-width:660px;margin-bottom:30px}
+.kicker{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--warm);margin-bottom:14px}
+
+/* ---------- PANELS ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px}
+.panel + .panel{margin-top:22px}
+.row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.lbl{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.04em;min-width:78px}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:5px;border-radius:5px;background:var(--line2);outline:none;min-width:120px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--warm);cursor:pointer;box-shadow:0 0 14px rgba(255,182,72,.7)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:none;border-radius:50%;background:var(--warm);cursor:pointer}
+.val{font-family:'Space Mono',monospace;font-weight:700;color:var(--warm);min-width:56px;text-align:right;font-size:15px}
+button.act{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--text);background:transparent;
+  border:1px solid var(--line2);padding:10px 16px;border-radius:10px;cursor:pointer;transition:.16s;display:inline-flex;align-items:center;gap:7px}
+button.act:hover{border-color:var(--warm);color:var(--warm)}
+button.act:active{transform:scale(.97)}
+button.act:disabled{opacity:.4;cursor:not-allowed}
+button.fill{background:var(--warm);color:#1a1205;border-color:var(--warm);font-weight:700}
+button.fill:hover{background:#ffc874;color:#1a1205}
+.note{font-size:13.5px;margin-top:16px;min-height:20px;font-family:'Space Mono',monospace}
+input[type=number]{font-family:'Space Mono',monospace;background:var(--panel2);border:1px solid var(--line2);color:var(--text);
+  padding:9px 11px;border-radius:9px;width:84px;font-size:14px}
+input[type=number]:focus{outline:none;border-color:var(--warm)}
+.ctrlgrid{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:6px}
+.ctrlgrid .row{flex:1;min-width:230px}
+
+/* dimmer bars */
+#bars{display:flex;align-items:flex-end;gap:4px;height:120px;margin-top:24px;padding:0 2px}
+#bars div{flex:1;background:var(--warm);border-radius:3px;opacity:.25;transition:height .25s,opacity .25s}
+.axis{display:flex;justify-content:space-between;margin-top:8px;font-family:'Space Mono',monospace;font-size:11px;color:var(--faint)}
+
+.pill{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;padding:4px 12px;border-radius:8px;color:#fff}
+.verdict{font-family:'Space Mono',monospace;font-weight:700;font-size:14px}
+.qbox{font-family:'Space Mono',monospace;font-weight:700;font-size:22px;color:var(--warm)}
+
+/* results table */
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+th,td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;font-family:'Space Mono',monospace}
+thead th{color:var(--muted);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+tr.best td{color:var(--warm);font-weight:600}
+tr.best td:first-child{color:var(--warm)}
+.cap{color:var(--faint);font-size:12.5px;margin-top:14px;font-style:italic}
+
+footer{padding:50px 0 70px;text-align:center;border-top:1px solid var(--line);color:var(--faint);font-size:13px;font-family:'Space Mono',monospace}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--warm)}
+
+.fade{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.fade.in{opacity:1;transform:none}
+@media(max-width:560px){.panel{padding:22px 18px}section{padding:50px 0}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="spot" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <svg class="lamp-svg" viewBox="0 0 160 210" aria-hidden="true">
+        <!-- light pool on the desk -->
+        <ellipse cx="80" cy="196" rx="62" ry="9" fill="rgba(255,182,72,.12)"/>
+        <!-- cord/arm -->
+        <path d="M80 78 C 80 120, 64 150, 64 182" fill="none" stroke="#2a2a35" stroke-width="5" stroke-linecap="round"/>
+        <!-- base -->
+        <ellipse cx="64" cy="186" rx="34" ry="8" fill="#1c1c26" stroke="#33333f" stroke-width="2"/>
+        <rect x="58" y="176" width="12" height="12" rx="3" fill="#242430"/>
+        <!-- shade outer -->
+        <path d="M40 78 L58 24 L102 24 L120 78 Z" fill="#20202b" stroke="#3a3a47" stroke-width="2"/>
+        <!-- shade inner glow rim -->
+        <path d="M40 78 L120 78 L112 88 L48 88 Z" fill="url(#rim)"/>
+        <!-- bulb -->
+        <circle cx="80" cy="86" r="9" fill="var(--warm)">
+          <animate attributeName="opacity" values="1;.55;1" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+        <!-- emitted light rays -->
+        <g stroke="var(--warm)" stroke-width="2" stroke-linecap="round" opacity=".6">
+          <line x1="80" y1="96" x2="52" y2="150"><animate attributeName="opacity" values=".15;.7;.15" dur="3s" repeatCount="indefinite"/></line>
+          <line x1="80" y1="96" x2="80" y2="158"><animate attributeName="opacity" values=".7;.2;.7" dur="3.4s" repeatCount="indefinite"/></line>
+          <line x1="80" y1="96" x2="108" y2="150"><animate attributeName="opacity" values=".3;.75;.3" dur="2.8s" repeatCount="indefinite"/></line>
+        </g>
+        <defs>
+          <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--warm)" stop-opacity=".95"/>
+            <stop offset="1" stop-color="var(--warm)" stop-opacity=".2"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="badge">★ Spotlight · ICML 2026</div>
+      <h1 class="title"><span class="glow">LAMP</span></h1>
+      <p class="sub">Long-range Adaptive Memory Propagation</p>
+      <p class="tag">A lamp that carries information far across <em>space</em> and <em>time</em> — a differential-equation GNN for dynamic graphs that learns exactly how much to remember and how much to forget.</p>
+      <p class="authors">De Castelli · Gravina · Eliasof · Schönlieb · Bacciu</p>
+      <div class="btns">
+        <a class="btn primary" href="https://github.com/FabriDeCastelli/LAMP" target="_blank" rel="noopener">★ Code on GitHub</a>
+        <a class="btn" href="https://huggingface.co/datasets/FabrizioDeCastelli/ColoredLeafCounting" target="_blank" rel="noopener">⬇ Benchmark dataset</a>
+        <a class="btn" href="#play">↓ Play with it</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- THE IDEA -->
+  <section class="fade">
+    <p class="kicker">The one idea</p>
+    <h2>Conservation vs. forgetting</h2>
+    <p class="lead">Most graph models leak: signals from distant nodes or distant moments fade before they arrive. LAMP keeps a near-lossless channel open — then learns a per-dimension dimmer (the term Γ) that turns dissipation up only where the signal is noise.</p>
+  </section>
+
+  <!-- DIMMER -->
+  <section id="play" class="fade">
+    <p class="kicker">Toy #1</p>
+    <h2>The dimmer</h2>
+    <p class="lead">Γ is the dissipation knob. Fire a pulse, then watch how long the light survives. Turn it down and the past persists (long-range memory); turn it up and only recent signal remains (noise filtering).</p>
+    <div class="panel">
+      <div class="row">
+        <span class="lbl">Γ damping</span>
+        <input type="range" id="gamma" min="0" max="100" value="12" step="1">
+        <span class="val" id="gamma-out">0.12</span>
+      </div>
+      <div class="row" style="margin-top:18px">
+        <button class="act fill" id="pulse">⚡ Fire a pulse</button>
+        <button class="act" id="regime">Conservation mode</button>
+      </div>
+      <div id="bars"></div>
+      <div class="axis"><span>t = 0 (pulse)</span><span>time →</span></div>
+      <p class="note" id="regime-note"></p>
+    </div>
+  </section>
+
+  <!-- TREE -->
+  <section class="fade">
+    <p class="kicker">Toy #2 — the benchmark itself</p>
+    <h2>Colored leaf counting</h2>
+    <p class="lead">Our long-range stress test. Build a spider tree, then watch its leaves blink colored signals over time. Each leaf blinks <em>only sometimes</em>. The root lamp must count how many blinks matched <strong>its own colour</strong>, propagated all the way up from the deepest leaves — but it won't tell you. Count along, then guess.</p>
+    <div class="panel">
+      <div class="ctrlgrid">
+        <div class="row">
+          <span class="lbl">depth</span>
+          <input type="range" id="depth" min="2" max="10" value="4" step="1">
+          <span class="val" id="depth-out">4</span>
+        </div>
+        <div class="row">
+          <span class="lbl">width</span>
+          <input type="range" id="width" min="2" max="6" value="3" step="1">
+          <span class="val" id="width-out">3</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="lbl">emit p</span>
+        <input type="range" id="prob" min="10" max="90" value="50" step="5">
+        <span class="val" id="prob-out">0.50</span>
+        <span style="flex:1;min-width:10px"></span>
+        <span class="lbl" id="meta" style="min-width:0"></span>
+      </div>
+
+      <svg id="tree" viewBox="0 0 660 300" style="width:100%;height:auto;display:block;margin-top:18px" aria-label="Spider tree with colored leaves feeding a root lamp"></svg>
+
+      <div class="row" style="margin-top:6px">
+        <button class="act fill" id="run">▶ Run sequence</button>
+        <span class="lbl" style="min-width:0">root colour</span>
+        <span class="pill" id="rootcolor"></span>
+        <span style="flex:1;min-width:10px"></span>
+        <span class="lbl" id="tstep" style="min-width:0"></span>
+      </div>
+      <div class="row" style="margin-top:18px">
+        <span class="lbl" style="min-width:0">your guess</span>
+        <input type="number" id="guess" min="0" value="0">
+        <button class="act" id="check">Check</button>
+        <span class="verdict" id="verdict"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTHOUSE -->
+  <section class="fade">
+    <p class="kicker">Toy #3</p>
+    <h2>The lighthouse</h2>
+    <p class="lead">Same physics, spatial view. A beam sweeps a field of nodes. Without dissipation the afterglow trail reaches the far edge — distant nodes still hear the signal. Crank Γ and the beam dies at the horizon, like an ordinary GNN over-squashing.</p>
+    <div class="panel">
+      <div class="row">
+        <span class="lbl">Γ damping</span>
+        <input type="range" id="lh-gamma" min="0" max="100" value="10" step="1">
+        <span class="val" id="lh-out">0.10</span>
+      </div>
+      <canvas id="lighthouse" width="800" height="300" style="width:100%;height:auto;margin-top:20px;border-radius:12px;background:#0a0a12"></canvas>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="fade">
+    <p class="kicker">Does it work</p>
+    <h2>Yes — by a wide margin</h2>
+    <p class="lead">On the hardest long-range setting (3 colours, sequence length 600) LAMP cuts error roughly 4× versus the strongest temporal-GNN baselines. Lower MSE is better.</p>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Model</th><th>T=200</th><th>T=400</th><th>T=600</th></tr></thead>
+        <tbody>
+          <tr><td>DCRNN</td><td>1.283</td><td>0.811</td><td>0.675</td></tr>
+          <tr><td>GCRN-LSTM</td><td>1.248</td><td>1.012</td><td>0.837</td></tr>
+          <tr><td>EvolveGCN-O</td><td>1.307</td><td>0.991</td><td>0.868</td></tr>
+          <tr><td>T-GCN</td><td>1.307</td><td>1.004</td><td>0.838</td></tr>
+          <tr class="best"><td>LAMP (ours)</td><td>0.057</td><td>0.264</td><td>0.223</td></tr>
+        </tbody>
+      </table>
+      <p class="cap">Test MSE on ColoredLeafCounting, three-colour setting, averaged over 5 runs. Full tables, real-world forecasting & link-prediction results in the paper.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>LAMP &nbsp;·&nbsp; ICML 2026 Spotlight &nbsp;·&nbsp; <a href="https://github.com/FabriDeCastelli/LAMP" target="_blank" rel="noopener">github.com/FabriDeCastelli/LAMP</a></p>
+    <p style="margin-top:8px;color:var(--faint)">Built for the poster — build a tree, run it, count the blinks.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ---------- DIMMER ---------- */
+(function(){
+  var N=30,host=document.getElementById('bars'),bars=[];
+  for(var i=0;i<N;i++){var b=document.createElement('div');host.appendChild(b);bars.push(b);}
+  var gamma=0.12,conservation=false;
+  var g=document.getElementById('gamma'),out=document.getElementById('gamma-out'),note=document.getElementById('regime-note');
+  function setNote(){
+    if(gamma<0.15){note.style.color='var(--info)';note.textContent='// near-conservative — signal travels far in time. the long-range regime.';}
+    else if(gamma<0.5){note.style.color='var(--muted)';note.textContent='// balanced — some memory, some filtering.';}
+    else{note.style.color='var(--warm)';note.textContent='// strong dissipation — recent signal only. noise filtered, long-range memory collapses.';}
+  }
+  function decay(){for(var i=0;i<N;i++){var v=Math.exp(-gamma*i);bars[i].style.height=(5+v*110)+'px';bars[i].style.opacity=(0.2+v*0.8).toFixed(2);}}
+  g.addEventListener('input',function(){gamma=g.value/100;out.textContent=gamma.toFixed(2);setNote();decay();});
+  document.getElementById('pulse').addEventListener('click',function(){for(var i=0;i<N;i++){bars[i].style.height='5px';bars[i].style.opacity='0.2';}setTimeout(decay,60);});
+  document.getElementById('regime').addEventListener('click',function(){
+    conservation=!conservation;this.textContent=conservation?'Filtering mode':'Conservation mode';
+    gamma=conservation?0.04:0.7;g.value=Math.round(gamma*100);out.textContent=gamma.toFixed(2);setNote();decay();
+  });
+  setNote();decay();
+})();
+
+/* ---------- TREE ---------- */
+(function(){
+  var COLORS={red:'#e24b4a',green:'#7bbf3a',blue:'#4f97e8'},names=Object.keys(COLORS);
+  var svg=document.getElementById('tree'),NS='http://www.w3.org/2000/svg';
+  var VW=660,VH=300;
+  var depth=4,width=3,prob=0.5,emitP=0.5;
+  var T=14;                       /* sequence length, kept watchable */
+  var rootColor,leaves,rootText,blinkLog,total,running,playing=false;
+  var leafNodes=[];               /* {x,y,color,el} for animation */
+
+  var dE=document.getElementById('depth'),wE=document.getElementById('width'),pE=document.getElementById('prob');
+  var dOut=document.getElementById('depth-out'),wOut=document.getElementById('width-out'),pOut=document.getElementById('prob-out');
+  var meta=document.getElementById('meta'),tstep=document.getElementById('tstep'),verdict=document.getElementById('verdict');
+  var runBtn=document.getElementById('run'),checkBtn=document.getElementById('check');
+
+  function E(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function rc(){return names[Math.floor(Math.random()*3)];}
+
+  /* How many leaves at full width^depth — but we only ever *draw* a capped set.
+     We render up to MAXLEAF actual leaves; the true count is width, and the
+     middle of the tree is collapsed into a placeholder when depth is large. */
+  var MAXLEAF=6;
+
+  function build(){
+    svg.innerHTML='';leafNodes=[];leaves=[];
+    rootColor=rc();
+    /* Figure 5: root fans into `width` branches; each branch is a chain of
+       `depth-1` intermediate nodes ending in one leaf. So width branches => width leaves. */
+    var branches=Math.min(width,MAXLEAF);
+    var rootX=VW/2, rootY=34;
+    var leafY=VH-30;
+    var topRowY=rootY+52;            /* first intermediate row, just below root */
+
+    /* deep trees: collapse the middle of every branch into a placeholder band */
+    var deep = depth>5;
+    /* visual rows of intermediate nodes drawn per branch (excludes root & leaf rows) */
+    var innerRows = depth-1;                       /* true intermediate rows */
+    var drawnInner = deep ? 2 : innerRows;         /* show top + bottom inner node when deep */
+    var rowCount = drawnInner + 1;                 /* inner rows + leaf row */
+    var usableTop=topRowY, usableBot=leafY;
+    var span=Math.max(1,rowCount-1), rowY=[];
+    for(var r=0;r<rowCount;r++) rowY.push(usableTop+(usableBot-usableTop)*(r/span));
+
+    /* x position per branch, evenly fanned */
+    var gap=VW/(branches+1), bx=[];
+    for(var b=0;b<branches;b++) bx.push(gap*(b+1));
+
+    /* ---- draw each branch ---- */
+    for(var b=0;b<branches;b++){
+      var x=bx[b];
+      /* root -> first inner node of this branch (the fan-out) */
+      svg.appendChild(E('line',{x1:rootX,y1:rootY+16,x2:x,y2:rowY[0],
+        stroke:'rgba(255,255,255,.16)','stroke-width':2}));
+      /* vertical chain of inner nodes + leaf */
+      for(var r=0;r<rowCount-1;r++){
+        svg.appendChild(E('line',{x1:x,y1:rowY[r],x2:x,y2:rowY[r+1],
+          stroke:'rgba(255,255,255,.16)','stroke-width':2}));
+      }
+      /* inner node dots (all rows except the last, which is the leaf) */
+      for(var r=0;r<rowCount-1;r++){
+        svg.appendChild(E('circle',{cx:x,cy:rowY[r],r:5,fill:'#14141b',
+          stroke:'rgba(255,255,255,.22)','stroke-width':2}));
+      }
+      /* collapsed-depth placeholder between the two drawn inner nodes */
+      if(deep){
+        var hidden=innerRows-2, midY=(rowY[0]+rowY[rowCount-2])/2;
+        /* dotted segment over the gap */
+        svg.appendChild(E('line',{x1:x,y1:rowY[0],x2:x,y2:rowY[rowCount-2],
+          stroke:'rgba(255,255,255,.28)','stroke-width':1,'stroke-dasharray':'3 4'}));
+        svg.appendChild(E('circle',{cx:x,cy:midY,r:10,fill:'#1c1c26',
+          stroke:'rgba(255,255,255,.2)','stroke-width':1}));
+        var ht=E('text',{x:x,y:midY+4,'text-anchor':'middle','font-size':'10','font-weight':'700',
+          fill:'#a3a199','font-family':'Space Mono,monospace'});
+        ht.textContent='+'+hidden;
+        svg.appendChild(ht);
+      }
+      /* leaf at the bottom of this branch */
+      var col=rc();leaves.push(col);
+      var leaf=E('circle',{cx:x,cy:leafY,r:13,fill:COLORS[col],stroke:'#000','stroke-width':1,opacity:'0.4'});
+      svg.appendChild(leaf);
+      /* per-branch path the pulse climbs: leaf -> inner nodes (bottom-up) -> root */
+      var path=[{x:x,y:leafY}];
+      for(var r=rowCount-2;r>=0;r--) path.push({x:x,y:rowY[r]});
+      path.push({x:rootX,y:rootY});
+      leafNodes.push({color:col,el:leaf,path:path});
+    }
+
+    /* root lamp on top */
+    var root=E('circle',{cx:rootX,cy:rootY,r:18,fill:'#14141b',stroke:COLORS[rootColor],'stroke-width':3});
+    svg.appendChild(root);
+    svg.appendChild(E('circle',{cx:rootX,cy:rootY,r:5,fill:COLORS[rootColor],opacity:'.85'}));
+    rootText=E('text',{x:rootX,y:rootY-26,'text-anchor':'middle','font-size':'13','font-weight':'700',
+      fill:'#6c6a64','font-family':'Space Mono,monospace'});
+    rootText.textContent='? blinks';
+    svg.appendChild(rootText);
+    window.__root=root;
+
+    var pill=document.getElementById('rootcolor');
+    pill.textContent=rootColor;pill.style.background=COLORS[rootColor];
+
+    meta.textContent='depth '+depth+' · '+branches+' leaves at '+(depth-1)+' hops';
+    verdict.textContent='';tstep.textContent='';total=0;running=0;
+    document.getElementById('guess').value=0;
+  }
+
+  function precompute(){
+    blinkLog=[];total=0;
+    for(var t=0;t<T;t++){
+      var step=[];
+      for(var j=0;j<leafNodes.length;j++){
+        var on=Math.random()<emitP;          /* probabilistic emission */
+        step.push(on);
+        if(on && leafNodes[j].color===rootColor) total++;
+      }
+      blinkLog.push(step);
+    }
+  }
+
+  function pulseUp(j){
+    var n=leafNodes[j], root=window.__root, path=n.path;
+    var p=E('circle',{cx:path[0].x,cy:path[0].y,r:5,fill:COLORS[rootColor]});svg.appendChild(p);
+    var seg=0,s=null,segDur=140;
+    function step(ts){
+      if(!s)s=ts;var k=Math.min((ts-s)/segDur,1);
+      var A=path[seg],B=path[seg+1];
+      p.setAttribute('cx',A.x+(B.x-A.x)*k);
+      p.setAttribute('cy',A.y+(B.y-A.y)*k);
+      if(k<1){requestAnimationFrame(step);}
+      else if(seg<path.length-2){seg++;s=null;requestAnimationFrame(step);}
+      else{root.setAttribute('stroke-width','7');setTimeout(function(){root.setAttribute('stroke-width','3');},180);svg.removeChild(p);}
+    }
+    requestAnimationFrame(step);
+  }
+
+  function run(){
+    if(playing)return;
+    precompute();playing=true;runBtn.disabled=true;checkBtn.disabled=true;
+    var t=0;running=0;
+    var iv=setInterval(function(){
+      if(t>=T){clearInterval(iv);playing=false;runBtn.disabled=false;checkBtn.disabled=false;
+        tstep.textContent='complete — how many matched?';return;}
+      tstep.textContent='t = '+(t+1)+' / '+T;
+      var step=blinkLog[t];
+      for(var j=0;j<leafNodes.length;j++){
+        if(step[j]){
+          leafNodes[j].el.setAttribute('opacity','1');
+          leafNodes[j].el.setAttribute('r','16');
+          if(leafNodes[j].color===rootColor){running++;pulseUp(j);}
+        }
+      }
+      /* NOTE: root count stays hidden — we never reveal `running` */
+      setTimeout(function(){
+        for(var j=0;j<leafNodes.length;j++){leafNodes[j].el.setAttribute('opacity','0.4');leafNodes[j].el.setAttribute('r','13');}
+      },360);
+      t++;
+    },900);   /* slowed to 0.9s/step so people can count */
+  }
+
+  dE.addEventListener('input',function(){depth=+dE.value;dOut.textContent=depth;build();});
+  wE.addEventListener('input',function(){width=+wE.value;wOut.textContent=width;build();});
+  pE.addEventListener('input',function(){emitP=pE.value/100;pOut.textContent=emitP.toFixed(2);});
+  runBtn.addEventListener('click',run);
+  checkBtn.addEventListener('click',function(){
+    if(!blinkLog||playing)return;
+    var gss=parseInt(document.getElementById('guess').value,10);
+    if(gss===total){verdict.style.color='var(--teal)';verdict.textContent='✓ correct — '+total+' matching blinks';}
+    else{verdict.style.color='var(--red)';verdict.textContent='✗ it was '+total;}
+    rootText.textContent=total+' blinks';rootText.setAttribute('fill','var(--warm)');
+  });
+
+  build();
+})();
+
+/* ---------- LIGHTHOUSE ---------- */
+(function(){
+  var cv=document.getElementById('lighthouse'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  var gamma=0.10,ang=0;
+  document.getElementById('lh-gamma').addEventListener('input',function(){gamma=this.value/100;document.getElementById('lh-out').textContent=gamma.toFixed(2);});
+  var nodes=[];for(var i=0;i<70;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,lit:0});
+  var ox=40,oy=H/2;
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    ang+=0.012;var dir=Math.sin(ang)*0.9;
+    var reach=W*Math.exp(-gamma*1.4)+90;
+    var grd=ctx.createLinearGradient(ox,oy,ox+reach,oy+dir*reach);
+    grd.addColorStop(0,'rgba(255,182,72,.28)');grd.addColorStop(1,'rgba(255,182,72,0)');
+    ctx.beginPath();ctx.moveTo(ox,oy);
+    ctx.lineTo(ox+reach,oy+dir*reach-34);ctx.lineTo(ox+reach,oy+dir*reach+34);ctx.closePath();
+    ctx.fillStyle=grd;ctx.fill();
+    for(var i=0;i<nodes.length;i++){
+      var n=nodes[i];
+      var tgtY=oy+dir*(n.x-ox);
+      var onBeam=Math.abs(n.y-tgtY)<26 && n.x>ox;
+      var falloff=Math.exp(-gamma*(n.x-ox)/90);
+      if(onBeam) n.lit=Math.max(n.lit,falloff);
+      n.lit*=0.965;
+      var a=0.10+n.lit*0.9;
+      ctx.beginPath();ctx.arc(n.x,n.y,3+n.lit*3,0,7);
+      ctx.fillStyle='rgba(255,182,72,'+a.toFixed(3)+')';ctx.fill();
+    }
+    ctx.beginPath();ctx.arc(ox,oy,9,0,7);ctx.fillStyle='#ffb648';ctx.fill();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ---------- reveal ---------- */
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+  document.querySelectorAll('.fade').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>
