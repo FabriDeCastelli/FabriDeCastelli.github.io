@@ -21,3 +21,17 @@ author_profile: true
     </p>
   </article>
 </div>
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    <h2 class="archive__item-title" itemprop="headline">
+      <a href="{{ base_path }}/projects/TIDES/">TIDES: Temporal Injection of Decoupled Encodings into Static GNNs</a>
+    </h2>
+    <p class="archive__item-excerpt" itemprop="description">
+      An interactive companion to our Graph Foundation Models Workshop paper at ICML 2026:
+      a compositional framework that decouples time from space, injecting three frozen,
+      domain-agnostic priors into a static GNN for transferable temporal graph learning.
+      Watch the tide move over a static seabed, then explore the zero-shot transfer results.
+    </p>
+  </article>
+</div>

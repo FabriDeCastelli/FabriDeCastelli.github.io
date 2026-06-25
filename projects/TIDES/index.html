@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TIDES (Temporal Injection of Decoupled Encodings into Static GNNs): a compositional framework that decouples time from space to build transferable temporal graph foundation models.">
+<title>TIDES: Temporal Injection of Decoupled Encodings into Static GNNs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>
+:root{
+  --bg:#eef6fc; --bg-2:#f7fbfe; --foam:#ffffff;
+  --azure:#1577cf; --azure-soft:#3f97e6; --aqua:#1bb6ad;
+  --navy:#0c2a47; --slate:#5a7790; --slate-2:#7d96ac;
+  --line:#d3e3f0; --line-soft:#e4eef6;
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'Manrope',system-ui,sans-serif;
+  --font-mono:'Space Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;line-height:1.6}
+::selection{background:rgba(27,182,173,.25)}
+a{color:inherit}
+@keyframes tides-rise{0%{transform:translateY(8px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important}}
+
+/* ---------- HEADER ---------- */
+.hdr{position:sticky;top:0;z-index:40;backdrop-filter:saturate(1.4) blur(8px);
+  background:rgba(238,246,252,.72);border-bottom:1px solid var(--line-soft)}
+.hdr-in{max-width:1180px;margin:0 auto;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand b{font-family:var(--font-mono);font-size:13px;letter-spacing:.34em;color:var(--azure);font-weight:700}
+.brand .sep{width:1px;height:16px;background:var(--line)}
+.brand .t{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;color:var(--slate-2)}
+.nav{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500;color:var(--slate)}
+.nav a{text-decoration:none}
+.nav a.p{color:var(--azure);font-weight:600}
+@media(max-width:640px){.nav{display:none}}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line-soft)}
+#tides-hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-glow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% -10%, rgba(150,205,245,.55) 0%, rgba(150,205,245,0) 55%)}
+.hero-in{position:relative;z-index:3;max-width:1180px;margin:0 auto;padding:92px 28px 116px;text-align:center}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.28em;color:var(--azure);margin-bottom:26px;animation:tides-rise .6s ease both}
+.hero-title{font-family:var(--font-display);font-weight:600;font-size:clamp(64px,15vw,168px);line-height:.92;
+  letter-spacing:-.02em;margin:0;color:var(--navy);animation:tides-rise .7s ease both}
+.hero-sub{font-family:var(--font-display);font-weight:400;font-style:italic;font-size:clamp(19px,2.7vw,30px);
+  line-height:1.3;color:var(--azure);margin:18px auto 0;max-width:780px}
+.hero-tag{font-size:clamp(15px,1.7vw,18px);line-height:1.55;color:var(--slate);margin:22px auto 0;max-width:640px}
+.hero-authors{font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;color:var(--navy);margin:34px 0 14px}
+.hero-badge{display:inline-flex;align-items:center;flex-wrap:wrap;justify-content:center;border:1px solid var(--line);
+  background:rgba(255,255,255,.6);border-radius:999px;padding:8px 18px;font-family:var(--font-mono);font-size:11.5px;
+  letter-spacing:.12em;color:var(--slate);text-transform:uppercase}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:38px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;padding:14px 26px;border-radius:999px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--azure);color:#fff;box-shadow:0 8px 24px -8px rgba(21,119,207,.55)}
+.btn-p:hover{background:#1a82e0}
+.btn-s{background:rgba(255,255,255,.78);color:var(--navy);border:1px solid var(--line)}
+.btn-s:hover{border-color:var(--azure-soft)}
+.hero-switch{display:inline-flex;align-items:center;gap:6px;margin-top:52px;padding:5px;
+  background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:999px}
+.hero-switch .lbl{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;color:var(--slate-2);padding:0 10px}
+.hero-switch button{cursor:pointer;border:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;
+  padding:7px 14px;border-radius:999px;transition:all .2s;background:transparent;color:var(--slate);font-weight:400}
+.hero-switch button.on{background:var(--azure);color:#fff;font-weight:700}
+
+/* ---------- BLOCKS ---------- */
+.block{max-width:1180px;margin:0 auto;padding:58px 28px;border-top:1px solid var(--line-soft)}
+.kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.2em;color:var(--azure);margin-bottom:16px}
+.kicker.aqua{color:var(--aqua)}
+.head{font-family:var(--font-display);font-weight:500;font-size:clamp(28px,3.6vw,42px);line-height:1.1;
+  letter-spacing:-.015em;margin:0 0 18px;color:var(--navy)}
+.lead{font-size:16.5px;line-height:1.7;color:var(--slate);margin:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px;align-items:center}
+
+/* overview */
+.ov{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:56px;align-items:start}
+.ov .head{font-size:clamp(30px,4vw,46px);line-height:1.08;margin:0}
+.ov .body{font-size:17px;line-height:1.7;color:var(--slate)}
+.ov .body p{margin:0 0 18px}
+.ov .body p:last-child{margin:0}
+
+/* figure card */
+.figcard{position:relative;background:var(--foam);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.figcard .fglow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(80% 70% at 30% 20%, rgba(63,151,230,.08), transparent 60%)}
+.figlabel{position:absolute;top:12px;left:15px;z-index:2;font-family:var(--font-mono);font-size:10.5px;
+  letter-spacing:.18em;color:var(--slate-2)}
+.figcard svg{display:block;width:100%;height:auto;position:relative;z-index:1}
+.fsw{position:absolute;bottom:12px;right:14px;z-index:3;display:flex;gap:5px}
+.fsw button{cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.8);color:var(--slate);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;padding:5px 10px;border-radius:999px;transition:all .18s}
+.fsw button.on{background:var(--azure);color:#fff;border-color:var(--azure);font-weight:700}
+
+/* equation box */
+.eqbox{margin-top:34px;background:var(--bg-2);border:1px solid var(--line-soft);border-left:4px solid var(--azure);
+  border-radius:0 6px 6px 0;padding:18px 26px;color:var(--navy)}
+.eqbox-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;color:var(--azure);margin-bottom:6px}
+.eqbox .eqline{overflow-x:auto;overflow-y:hidden;padding:6px 0}
+.eqbox-cap{font-size:13.5px;line-height:1.6;color:var(--slate);margin-top:8px}
+
+/* results */
+.tbl-wrap{overflow-x:auto;background:var(--foam);border:1px solid var(--line);border-radius:6px;margin-top:10px}
+table.r{width:100%;border-collapse:collapse;min-width:440px;font-size:14.5px}
+table.r thead tr{text-align:left;border-bottom:2px solid var(--navy)}
+table.r th{padding:15px 20px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--slate);font-weight:700;text-transform:uppercase}
+table.r th:not(:first-child),table.r td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+table.r td{padding:14px 20px;color:var(--slate);border-bottom:1px solid var(--line-soft)}
+table.r td.name{color:var(--navy);font-weight:500}
+table.r tr.best{background:rgba(27,182,173,0.08)}
+table.r tr.best td{color:var(--azure)}
+table.r tr.best td.name{font-weight:700}
+table.r td.win{color:var(--azure);font-weight:700}
+.rcols{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start;margin-top:10px}
+@media(max-width:760px){.rcols{grid-template-columns:1fr}}
+.rsub{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--aqua);text-transform:uppercase;margin:4px 0 6px}
+.tcap{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--slate-2);margin-top:12px;line-height:1.7}
+
+/* footer */
+footer{margin-top:60px;border-top:1px solid var(--line-soft);background:var(--bg-2)}
+.foot-in{max-width:1180px;margin:0 auto;padding:48px 28px;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end}
+.foot-in .big{font-family:var(--font-display);font-weight:600;font-size:30px;color:var(--navy);letter-spacing:-.01em}
+.foot-in .small{font-size:14px;color:var(--slate);margin-top:6px;max-width:460px;line-height:1.5}
+.foot-links{display:flex;gap:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em}
+.foot-links a{color:var(--azure);text-decoration:none}
+.foot-bar{border-top:1px solid var(--line-soft)}
+.foot-bar .in{max-width:1180px;margin:0 auto;padding:16px 28px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--slate-2)}
+
+/* KaTeX isolation on the light theme */
+.katex,.katex *{box-sizing:content-box}
+.katex{color:var(--navy);font-size:1.05em}
+.eqbox .katex{font-size:1.16em}
+.katex-display{margin:0;text-align:left}
+.eqbox .katex-display>.katex{text-align:left}
+
+/* reveal */
+.fade{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.fade.in{opacity:1;transform:none}
+@media(max-width:560px){.block{padding:44px 22px}.hero-in{padding:66px 22px 86px}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <b>TIDES</b><span class="sep"></span><span class="t">TEMPORAL GRAPH FM</span>
+    </div>
+    <nav class="nav">
+      <a href="#overview">Overview</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#" class="p">Paper</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="tides-hero-canvas"></canvas>
+  <div class="hero-glow"></div>
+  <div class="hero-in">
+    <div class="eyebrow">TIME, THEN SPACE</div>
+    <h1 class="hero-title">TIDES</h1>
+    <p class="hero-sub">Temporal Injection of Decoupled Encodings into Static GNNs</p>
+    <p class="hero-tag">A compositional framework that decouples time from space to build transferable temporal graph foundation models.</p>
+    <div class="hero-authors">De Castelli, Gravina, Bacciu, Eliasof</div>
+    <div class="hero-badge">Graph Foundation Models Workshop&nbsp;·&nbsp;ICML 2026&nbsp;·&nbsp;Seoul</div>
+    <div class="hero-btns">
+      <a href="#" class="btn btn-p">Read the paper</a>
+      <a href="#" class="btn btn-s">View code</a>
+    </div>
+    <div class="hero-switch" role="group" aria-label="Hero animation">
+      <span class="lbl">HERO</span>
+      <button type="button" data-v="a" class="on">Tide &amp; seabed</button>
+      <button type="button" data-v="b">Caustics</button>
+      <button type="button" data-v="c">Tide level</button>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview" class="block fade" style="border-top:none;padding-top:92px">
+  <div class="ov">
+    <div>
+      <div class="kicker aqua">OVERVIEW</div>
+      <h2 class="head">The tide moves over a seabed that stays still.</h2>
+    </div>
+    <div class="body">
+      <p>Learning general representations for temporal graphs is challenging because temporal dynamics and structural changes are often intertwined, causing models to capture domain-specific patterns over generalizable ones. This acts as a barrier to foundation models for temporal graphs.</p>
+      <p>TIDES decouples the two. It relies on a one-time, parallel extraction of three domain-agnostic priors, temporal embeddings from a frozen time-series foundation model, deterministic summaries of local temporal contexts, and supra-Laplacian positional encodings of the changing graph structure. These features are computed once and used as node inputs for a static GNN, so the same spatial reasoning transfers across domains while the temporal component adapts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 01 MOTIVATION -->
+<section id="method" class="block fade">
+  <div class="grid2">
+    <div style="order:1">
+      <div class="kicker">01 / MOTIVATION</div>
+      <h2 class="head">Time and space are entangled in temporal graphs.</h2>
+      <p class="lead">When sequence models and GNNs are trained jointly, every shared parameter is exposed to conflicting spatio-temporal patterns and is forced to encode domain identity to fit them. This produces a leakage channel that scales poorly with corpus diversity and leads to negative transfer under heterogeneous domain shifts. We argue that this failure is in part structural, and that the two sources of variation should be treated as separable.</p>
+    </div>
+    <div style="order:2">
+      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 1 · ENTANGLED SIGNAL</div>
+        <svg viewBox="0 0 480 300" aria-label="A temporal signal entangled with a graph structure">
+          <!-- graph structure -->
+          <g stroke="rgba(90,135,170,.34)" stroke-width="1.3">
+            <line x1="95" y1="150" x2="160" y2="200"/>
+            <line x1="95" y1="150" x2="225" y2="135"/>
+            <line x1="160" y1="200" x2="290" y2="195"/>
+            <line x1="225" y1="135" x2="290" y2="195"/>
+            <line x1="225" y1="135" x2="355" y2="140"/>
+            <line x1="290" y1="195" x2="415" y2="185"/>
+            <line x1="355" y1="140" x2="415" y2="185"/>
+          </g>
+          <g fill="rgba(60,120,170,.62)">
+            <circle cx="95" cy="150" r="5"/><circle cx="160" cy="200" r="5"/><circle cx="225" cy="135" r="5"/>
+            <circle cx="290" cy="195" r="5"/><circle cx="355" cy="140" r="5"/><circle cx="415" cy="185" r="5"/>
+          </g>
+          <!-- entangled temporal signals weaving through the structure -->
+          <path d="M44 142 C 110 86, 168 202, 238 142 S 364 82, 446 150" fill="none" stroke="var(--azure)" stroke-width="2.6" opacity=".92" stroke-linecap="round"/>
+          <path d="M44 172 C 122 226, 186 104, 256 174 S 382 226, 446 146" fill="none" stroke="var(--aqua)" stroke-width="2.2" opacity=".8" stroke-linecap="round"/>
+          <!-- legend -->
+          <g font-family="Space Mono,monospace" font-size="10">
+            <line x1="62" y1="262" x2="86" y2="262" stroke="var(--azure)" stroke-width="2.6" stroke-linecap="round"/>
+            <text x="94" y="266" fill="var(--slate)">temporal signal</text>
+            <circle cx="256" cy="262" r="4.5" fill="rgba(60,120,170,.62)"/>
+            <text x="268" y="266" fill="var(--slate)">graph structure</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 DECOUPLE -->
+<section class="block fade">
+  <div class="grid2">
+    <div style="order:2">
+      <div class="kicker">02 / METHOD</div>
+      <h2 class="head">Decouple the tide from the seabed.</h2>
+      <p class="lead">TIDES formulates representation learning as a composition of three structured operators that encode the temporal signal, the structural topology, and positional information independently, then integrate them into a unified space. Following the time-then-graph paradigm, the representation map \(\Phi\) concatenates a temporal operator \(\Phi_{\mathrm f}\), a statistical operator \(\Phi_{\mathrm s}\), and a positional operator \(\Phi_{\mathrm p}\). This decomposition induces a partition of the representation space, so each subspace captures a distinct source of variation.</p>
+    </div>
+    <div style="order:1">
+      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 2 · DECOUPLED ENCODING</div>
+        <svg viewBox="0 0 480 300" aria-label="Decoupling time and space into three operators">
+          <!-- time input (wave) -->
+          <text x="34" y="74" font-family="Space Mono,monospace" font-size="10" fill="var(--slate)">time</text>
+          <path d="M34 96 C 60 78, 84 114, 110 96 S 150 78, 168 96" fill="none" stroke="var(--azure)" stroke-width="2.2"/>
+          <!-- space input (graph) -->
+          <text x="34" y="206" font-family="Space Mono,monospace" font-size="10" fill="var(--slate)">space</text>
+          <g stroke="rgba(90,135,170,.4)" stroke-width="1.2"><line x1="44" y1="232" x2="92" y2="252"/><line x1="92" y1="252" x2="150" y2="228"/><line x1="44" y1="232" x2="150" y2="228"/></g>
+          <g fill="rgba(60,120,170,.6)"><circle cx="44" cy="232" r="4.5"/><circle cx="92" cy="252" r="4.5"/><circle cx="150" cy="228" r="4.5"/></g>
+          <!-- arrows -->
+          <g stroke="var(--slate-2)" stroke-width="1.4" fill="none" marker-end="url(#ah)">
+            <path d="M176 96 C 210 96, 210 96, 244 96"/>
+            <path d="M176 96 C 210 96, 210 150, 244 150"/>
+            <path d="M160 240 C 210 240, 210 204, 244 204"/>
+          </g>
+          <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--slate-2)"/></marker></defs>
+          <!-- three operator chips -->
+          <g font-family="Space Mono,monospace" font-size="12" font-weight="700">
+            <rect x="248" y="80" width="86" height="32" rx="7" fill="rgba(21,119,207,.12)" stroke="var(--azure)"/>
+            <text x="291" y="100" text-anchor="middle" fill="var(--azure)">&#934;_f</text>
+            <rect x="248" y="134" width="86" height="32" rx="7" fill="rgba(27,182,173,.12)" stroke="var(--aqua)"/>
+            <text x="291" y="154" text-anchor="middle" fill="#108d86">&#934;_s</text>
+            <rect x="248" y="188" width="86" height="32" rx="7" fill="rgba(90,135,170,.12)" stroke="var(--slate)"/>
+            <text x="291" y="208" text-anchor="middle" fill="var(--slate)">&#934;_p</text>
+          </g>
+          <!-- concat arrow -->
+          <path d="M338 150 C 366 150, 366 150, 392 150" stroke="var(--slate-2)" stroke-width="1.4" fill="none" marker-end="url(#ah)"/>
+          <!-- concatenated representation bar -->
+          <g>
+            <rect x="398" y="92" width="26" height="116" rx="5" fill="none" stroke="var(--line)"/>
+            <rect x="399" y="93" width="24" height="38" fill="rgba(21,119,207,.5)"/>
+            <rect x="399" y="131" width="24" height="38" fill="rgba(27,182,173,.5)"/>
+            <rect x="399" y="169" width="24" height="38" fill="rgba(90,135,170,.5)"/>
+          </g>
+          <text x="411" y="226" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="var(--slate-2)">H</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="eqbox">
+    <div class="eqbox-label">COMPOSITIONAL ENCODING</div>
+    <div class="eqline">\[ \Phi(\mathcal{X}, \mathcal{G}_{1:T}) = \big[\, \Phi_{\mathrm f}(\mathcal{X}) \;\Vert\; \Phi_{\mathrm s}(\mathcal{X}) \;\Vert\; \Phi_{\mathrm p}(\mathcal{G}_{1:T}) \,\big], \qquad \mathbb{R}^{d} = \mathcal{H}_{\mathrm f} \oplus \mathcal{H}_{\mathrm s} \oplus \mathcal{H}_{\mathrm p} \]</div>
+    <div class="eqbox-cap">Three complementary operators are concatenated into a single node representation, and the representation space splits into a temporal, a statistical, and a structural subspace.</div>
+  </div>
+</section>
+
+<!-- 03 PRIORS -->
+<section class="block fade">
+  <div class="grid2">
+    <div style="order:1">
+      <div class="kicker">03 / PRIORS</div>
+      <h2 class="head">Three frozen, domain-agnostic priors.</h2>
+      <p class="lead">The temporal operator \(\Phi_{\mathrm f}\) maps each node trajectory to embeddings through a frozen time-series foundation model over a sliding context. The statistical operator \(\Phi_{\mathrm s}\) summarizes the recent local signal, grounding the deep temporal representation in the immediate state of the network. The positional operator \(\Phi_{\mathrm p}\) lifts a sliding window of snapshots into a multilayer graph and reads the smallest eigenpairs of its supra-Laplacian. The parameters of all three are precomputed once and never updated during downstream training.</p>
+    </div>
+    <div style="order:2">
+      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 3 · FROZEN PRIORS</div>
+        <svg viewBox="0 0 480 300" aria-label="The three frozen priors of TIDES">
+          <!-- Panel 1: frozen time-series foundation model -->
+          <rect x="26" y="76" width="132" height="150" rx="8" fill="var(--bg-2)" stroke="var(--line)"/>
+          <text x="44" y="100" font-family="Space Mono,monospace" font-size="12" font-weight="700" fill="var(--azure)">&#934;_f</text>
+          <g><rect x="131" y="85" width="13" height="9" rx="2" fill="rgba(21,119,207,.14)" stroke="var(--azure-soft)" stroke-width="1.2"/><path d="M134 85 v-3 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="var(--azure-soft)" stroke-width="1.2"/></g>
+          <path d="M42 150 C 60 124, 76 178, 94 150 S 128 124, 146 152" fill="none" stroke="var(--azure)" stroke-width="2.2" stroke-linecap="round"/>
+          <text x="92" y="212" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="var(--slate-2)">frozen TS model</text>
+          <!-- Panel 2: local statistical summaries -->
+          <rect x="174" y="76" width="132" height="150" rx="8" fill="var(--bg-2)" stroke="var(--line)"/>
+          <text x="192" y="100" font-family="Space Mono,monospace" font-size="12" font-weight="700" fill="#108d86">&#934;_s</text>
+          <g><rect x="279" y="85" width="13" height="9" rx="2" fill="rgba(27,182,173,.14)" stroke="var(--aqua)" stroke-width="1.2"/><path d="M282 85 v-3 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="var(--aqua)" stroke-width="1.2"/></g>
+          <line x1="192" y1="184" x2="290" y2="184" stroke="var(--line)" stroke-width="1"/>
+          <g fill="rgba(27,182,173,.55)">
+            <rect x="196" y="152" width="16" height="32"/><rect x="215" y="132" width="16" height="52"/>
+            <rect x="234" y="160" width="16" height="24"/><rect x="253" y="142" width="16" height="42"/><rect x="272" y="154" width="16" height="30"/>
+          </g>
+          <text x="240" y="212" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="var(--slate-2)">local statistics</text>
+          <!-- Panel 3: supra-Laplacian positional encoding -->
+          <rect x="322" y="76" width="132" height="150" rx="8" fill="var(--bg-2)" stroke="var(--line)"/>
+          <text x="340" y="100" font-family="Space Mono,monospace" font-size="12" font-weight="700" fill="var(--slate)">&#934;_p</text>
+          <g><rect x="427" y="85" width="13" height="9" rx="2" fill="rgba(90,135,170,.14)" stroke="var(--slate)" stroke-width="1.2"/><path d="M430 85 v-3 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="var(--slate)" stroke-width="1.2"/></g>
+          <g stroke="rgba(21,119,207,.35)" stroke-width="1" stroke-dasharray="2 3"><line x1="372" y1="124" x2="372" y2="186"/></g>
+          <g stroke="rgba(90,135,170,.55)" stroke-width="1" fill="rgba(60,120,170,.55)">
+            <g><line x1="346" y1="126" x2="372" y2="122"/><line x1="372" y1="122" x2="404" y2="128"/><circle cx="346" cy="126" r="3"/><circle cx="372" cy="122" r="3"/><circle cx="404" cy="128" r="3"/></g>
+            <g><line x1="346" y1="156" x2="372" y2="152"/><line x1="372" y1="152" x2="404" y2="158"/><circle cx="346" cy="156" r="3"/><circle cx="372" cy="152" r="3"/><circle cx="404" cy="158" r="3"/></g>
+            <g><line x1="346" y1="186" x2="372" y2="182"/><line x1="372" y1="182" x2="404" y2="188"/><circle cx="346" cy="186" r="3"/><circle cx="372" cy="182" r="3"/><circle cx="404" cy="188" r="3"/></g>
+          </g>
+          <text x="388" y="212" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="var(--slate-2)">supra-Laplacian</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="eqbox">
+    <div class="eqbox-label">FROZEN PRIORS</div>
+    <div class="eqline">\[ \Phi_{\mathrm f}(\mathcal{X})_t = f_\theta\big(\mathcal{X}_{t-w_f+1:t}\big) \in \mathbb{R}^{n \times d_f}, \qquad \mathbf{L}_{\mathrm{supra}} = \mathbf{D}_{\mathrm{supra}} - \mathbf{A}_{\mathrm{supra}} \in \mathbb{R}^{n w_p \times n w_p} \]</div>
+    <div class="eqbox-cap">A frozen time-series foundation model encodes each node trajectory over a window \(w_f\), while the supra-Laplacian of a sliding multilayer graph supplies positional structure through its smallest eigenpairs.</div>
+  </div>
+</section>
+
+<!-- 04 ARCHITECTURE -->
+<section class="block fade">
+  <div class="grid2">
+    <div style="order:2">
+      <div class="kicker">04 / ARCHITECTURE</div>
+      <h2 class="head">Fixed inputs to a trajectory-aware static GNN.</h2>
+      <p class="lead">The three precomputed features are treated as fixed inputs to a static GNN with \(L\) residual layers, trained only to model spatial dependencies. Rather than reading the final layer alone, the full residual trajectory is pooled across depth and refined by node-wise multi-head self-attention, so every layer scale contributes to the representation. Because sequence modeling is handled in a one-time preprocessing stage, the temporal dimension is factored out, avoiding backpropagation through time and keeping training parallelizable.</p>
+    </div>
+    <div style="order:1">
+      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 4 · ARCHITECTURE</div>
+        <svg viewBox="0 0 480 300" aria-label="The TIDES training architecture">
+          <defs><marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--slate-2)"/></marker></defs>
+          <g font-family="Space Mono,monospace" font-size="10" font-weight="700" text-anchor="middle">
+            <!-- inputs -->
+            <rect x="22" y="92" width="58" height="26" rx="6" fill="rgba(21,119,207,.12)" stroke="var(--azure)"/><text x="51" y="109" fill="var(--azure)">&#934;_f</text>
+            <rect x="22" y="124" width="58" height="26" rx="6" fill="rgba(27,182,173,.12)" stroke="var(--aqua)"/><text x="51" y="141" fill="#108d86">&#934;_s</text>
+            <rect x="22" y="156" width="58" height="26" rx="6" fill="rgba(90,135,170,.12)" stroke="var(--slate)"/><text x="51" y="173" fill="var(--slate)">&#934;_p</text>
+            <!-- gate -->
+            <rect x="108" y="118" width="56" height="40" rx="6" fill="var(--foam)" stroke="var(--line)"/><text x="136" y="142" fill="var(--navy)">Gate</text>
+            <!-- GNN xL -->
+            <rect x="190" y="112" width="74" height="52" rx="6" fill="rgba(21,119,207,.08)" stroke="var(--azure)"/><text x="227" y="134" fill="var(--navy)">GNN</text><text x="227" y="150" fill="var(--slate)" font-weight="400">x L (res)</text>
+            <!-- hist agg -->
+            <rect x="290" y="112" width="86" height="52" rx="6" fill="var(--foam)" stroke="var(--line)"/><text x="333" y="134" fill="var(--navy)">Historical</text><text x="333" y="150" fill="var(--navy)">Aggregation</text>
+            <!-- MHSA -->
+            <rect x="300" y="200" width="66" height="34" rx="6" fill="rgba(27,182,173,.1)" stroke="var(--aqua)"/><text x="333" y="221" fill="#108d86">MHSA</text>
+            <!-- output -->
+            <rect x="402" y="203" width="52" height="28" rx="6" fill="var(--azure)" stroke="var(--azure)"/><text x="428" y="221" fill="#fff">H&#771;</text>
+          </g>
+          <!-- arrows -->
+          <g stroke="var(--slate-2)" stroke-width="1.4" fill="none" marker-end="url(#ah2)">
+            <path d="M80 105 C 96 105, 96 132, 106 134"/>
+            <path d="M80 137 L106 137"/>
+            <path d="M80 169 C 96 169, 96 144, 106 142"/>
+            <path d="M164 138 L188 138"/>
+            <path d="M264 138 L288 138"/>
+            <path d="M333 166 L333 198"/>
+            <path d="M366 217 L400 217"/>
+          </g>
+          <!-- residual loop on GNN -->
+          <path d="M200 112 C 196 96, 258 96, 254 112" stroke="var(--azure)" stroke-width="1.2" fill="none" stroke-dasharray="3 3" marker-end="url(#ah2)"/>
+          <text x="227" y="92" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="var(--azure)">residual</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="eqbox">
+    <div class="eqbox-label">TRAJECTORY-AWARE AGGREGATION</div>
+    <div class="eqline">\[ \mathbf{Z} = \sum_{l=0}^{L} \alpha_l\, \hat{\mathbf{H}}_l, \qquad \tilde{\mathbf{H}} = \mathrm{MHSA}(\mathbf{Z}, \mathbf{Z}, \mathbf{Z}) \]</div>
+    <div class="eqbox-cap">The full residual trajectory of the static GNN is pooled across depth with signed weights, then refined by multi-head self-attention to restore inter-node mixing.</div>
+  </div>
+</section>
+
+<!-- 05 TRANSFER -->
+<section class="block fade">
+  <div class="grid2">
+    <div style="order:1">
+      <div class="kicker">05 / TRANSFER</div>
+      <h2 class="head">One framework, many temporal graphs.</h2>
+      <p class="lead">Because the priors are domain-agnostic and the backbone reasons over precomputed temporal and structural representations without encoding node identities or dataset-specific memory, TIDES transfers to unseen temporal graphs by simply recomputing the same priors. This reduces negative transfer and improves cross-graph transferability, outperforming state-of-the-art temporal graph baselines on the 20 unseen networks of the MiNT zero-shot benchmark.</p>
+    </div>
+    <div style="order:2">
+      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 5 · CROSS-DOMAIN TRANSFER</div>
+        <svg id="scatter" viewBox="0 0 480 320" aria-label="Per-network zero-shot transfer on MiNT test networks">
+          <!-- axes -->
+          <line x1="64" y1="32" x2="64" y2="268" stroke="var(--line)" stroke-width="1.2"/>
+          <line x1="64" y1="268" x2="436" y2="268" stroke="var(--line)" stroke-width="1.2"/>
+          <!-- no-transfer diagonal y=x -->
+          <line x1="64" y1="268" x2="436" y2="32" stroke="var(--slate-2)" stroke-width="1.1" stroke-dasharray="4 4"/>
+          <text x="332" y="74" font-family="Space Mono,monospace" font-size="9" fill="var(--slate-2)" transform="rotate(-31.7 332 74)">no transfer (y = x)</text>
+          <text x="250" y="292" text-anchor="middle" font-family="Space Mono,monospace" font-size="9.5" fill="var(--slate)">single-network AUC</text>
+          <text x="24" y="150" font-family="Space Mono,monospace" font-size="9.5" fill="var(--slate)" transform="rotate(-90 24 150)">zero-shot AUC</text>
+          <g id="scatter-pts"></g>
+        </svg>
+        <div class="fsw" role="group" aria-label="Toggle models">
+          <button type="button" data-m="both" class="on">Both</button>
+          <button type="button" data-m="tides">TIDES</button>
+          <button type="button" data-m="mint">MiNT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="tcap">Per-network zero-shot transfer on the 20 MiNT test networks (Table 5). Each marker compares single-network AUC (x) with multi-network, zero-shot AUC (y); markers above the dashed diagonal indicate positive transfer. TIDES (squares) sits above the line far more often than MiNT (circles).</p>
+</section>
+
+<!-- RESULTS (zero-shot only) -->
+<section id="results" class="block fade">
+  <div class="kicker aqua">RESULTS · ZERO-SHOT</div>
+  <h2 class="head">Transfer without relearning structure.</h2>
+  <p class="lead" style="max-width:680px">We evaluate zero-shot transfer on the MiNT benchmark. TIDES is pre-trained on 64 token networks and evaluated directly on 20 unseen networks, with no target-specific training. The task is binary graph property prediction at weekly resolution. Higher AUC and a lower average rank are better.</p>
+
+  <div class="rcols">
+    <div>
+      <div class="rsub">Average rank over 20 unseen networks</div>
+      <div class="tbl-wrap">
+        <table class="r">
+          <thead><tr><th>Model</th><th>Avg. rank &#8595;</th></tr></thead>
+          <tbody>
+            <tr><td class="name">HTGN</td><td>2.45</td></tr>
+            <tr><td class="name">MiNT-64</td><td>2.05</td></tr>
+            <tr><td class="name">TIDES-sup</td><td>2.60</td></tr>
+            <tr class="best"><td class="name">TIDES-64 (ours)</td><td>1.45</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="rsub">Transfer gain of the pre-trained models</div>
+      <div class="tbl-wrap">
+        <table class="r">
+          <thead><tr><th>Statistic</th><th>MiNT-64</th><th>TIDES-64</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Mean transfer gain &#916; &#8593;</td><td>+0.024</td><td class="win">+0.107</td></tr>
+            <tr><td class="name">Median &#916; &#8593;</td><td>+0.043</td><td class="win">+0.075</td></tr>
+            <tr><td class="name">Negative transfer (&#916;&lt;0) &#8595;</td><td>7 / 20</td><td class="win">2 / 20</td></tr>
+            <tr><td class="name">Strong transfer (&#916;&gt;+0.1) &#8593;</td><td>5 / 20</td><td class="win">9 / 20</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p class="tcap">Zero-shot AUC averaged over 20 unseen MiNT test networks and 3 seeds. TIDES-64 achieves the best average rank, ranking first on 12 of 20 networks and outperforming MiNT-64 despite using identical training data. Its mean transfer gain is more than four times that of MiNT-64, with negative transfer on only 2 of 20 networks.</p>
+
+  <div class="figcard" style="margin-top:30px"><div class="fglow"></div><div class="figlabel">SCALING WITH PRETRAINING SIZE</div>
+    <svg id="scaling" viewBox="0 0 480 300" aria-label="Mean zero-shot AUC versus number of pretraining token networks"></svg>
+  </div>
+  <p class="tcap">Mean zero-shot AUC as the number of pretraining token networks grows. TIDES outperforms the largest MiNT competitor using as few as four token networks, and its performance saturates early. Error bands show standard deviation across the test networks.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <div>
+      <div class="big">TIDES</div>
+      <div class="small">Temporal Injection of Decoupled Encodings into Static GNNs. Graph Foundation Models Workshop&nbsp;·&nbsp;ICML 2026&nbsp;·&nbsp;Seoul.</div>
+    </div>
+    <div class="foot-links">
+      <a href="#">PAPER</a><a href="#">CODE</a><a href="#">BIBTEX</a>
+    </div>
+  </div>
+  <div class="foot-bar"><div class="in">De Castelli, Gravina, Bacciu, Eliasof &nbsp;·&nbsp; 2026</div></div>
+</footer>
+
+<script>
+/* ---------- HERO CANVAS (tide over a static seabed) ---------- */
+(function(){
+  var canvas=document.getElementById('tides-hero-canvas');if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W=0,H=0,start=performance.now(),variant='a',seabed=null,raf=null;
+  function rng(seed){var s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+  function buildSeabed(){
+    var r=rng(20260624),n=18,nodes=[],i,j;
+    for(i=0;i<n;i++)nodes.push({x:30+r()*(W-60),y:H*0.6+r()*(H*0.34)});
+    var edges=[];
+    for(i=0;i<n;i++)for(j=i+1;j<n;j++){var dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y;if(Math.hypot(dx,dy)<W*0.16)edges.push([i,j]);}
+    seabed={nodes:nodes,edges:edges};
+  }
+  function drawSeabed(){
+    if(!seabed)return;ctx.save();
+    ctx.strokeStyle='rgba(90,135,170,0.18)';ctx.lineWidth=1;
+    seabed.edges.forEach(function(e){ctx.beginPath();ctx.moveTo(seabed.nodes[e[0]].x,seabed.nodes[e[0]].y);ctx.lineTo(seabed.nodes[e[1]].x,seabed.nodes[e[1]].y);ctx.stroke();});
+    seabed.nodes.forEach(function(p){ctx.beginPath();ctx.arc(p.x,p.y,3.2,0,Math.PI*2);ctx.fillStyle='rgba(60,120,170,0.35)';ctx.fill();});
+    ctx.restore();
+  }
+  function drawWaves(t){
+    drawSeabed();
+    var layers=[
+      {base:0.5,amp:0.05,len:0.9,speed:0.35,color:'rgba(63,151,230,0.16)',stroke:'rgba(21,119,207,0.4)'},
+      {base:0.54,amp:0.035,len:1.4,speed:-0.5,color:'rgba(27,182,173,0.14)',stroke:'rgba(27,182,173,0.45)'},
+      {base:0.48,amp:0.028,len:2.1,speed:0.8,color:'rgba(120,190,235,0.12)',stroke:'rgba(63,151,230,0.35)'}
+    ];
+    layers.forEach(function(L){
+      var x,y;ctx.beginPath();
+      for(x=0;x<=W;x+=6){y=H*L.base+Math.sin((x/W)*Math.PI*2*L.len+t*L.speed)*H*L.amp+Math.sin((x/W)*Math.PI*2*L.len*2.3+t*L.speed*1.6)*H*L.amp*0.3;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+      ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=L.color;ctx.fill();
+      ctx.beginPath();
+      for(x=0;x<=W;x+=6){y=H*L.base+Math.sin((x/W)*Math.PI*2*L.len+t*L.speed)*H*L.amp+Math.sin((x/W)*Math.PI*2*L.len*2.3+t*L.speed*1.6)*H*L.amp*0.3;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+      ctx.strokeStyle=L.stroke;ctx.lineWidth=1.4;ctx.stroke();
+    });
+  }
+  function drawCaustics(t){
+    ctx.save();
+    var blobs=[
+      {x:0.22,y:0.28,r:0.34,s:0.18,c:'rgba(120,195,240,0.22)'},
+      {x:0.62,y:0.18,r:0.4,s:-0.13,c:'rgba(27,182,173,0.16)'},
+      {x:0.85,y:0.42,r:0.3,s:0.22,c:'rgba(63,151,230,0.18)'},
+      {x:0.4,y:0.5,r:0.36,s:-0.2,c:'rgba(150,205,245,0.18)'}
+    ];
+    blobs.forEach(function(b,i){
+      var cx=(b.x+Math.sin(t*b.s+i)*0.05)*W,cy=(b.y+Math.cos(t*b.s*0.8+i)*0.04)*H,rad=b.r*Math.min(W,H);
+      var g=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);g.addColorStop(0,b.c);g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    });
+    ctx.lineWidth=1.2;
+    for(var k=0;k<5;k++){
+      ctx.beginPath();var yb=H*(0.12+k*0.12),x,y;
+      for(x=0;x<=W;x+=8){y=yb+Math.sin(x*0.012+t*0.6+k)*10+Math.sin(x*0.03-t*0.4+k*2)*6;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+      ctx.strokeStyle='rgba(63,151,230,'+(0.10+(k%2)*0.05)+')';ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawTideLevel(t){
+    var horizon=H*0.42,x,y;
+    ctx.beginPath();ctx.moveTo(0,horizon);ctx.lineTo(W,horizon);ctx.strokeStyle='rgba(90,135,170,0.3)';ctx.lineWidth=1;ctx.stroke();
+    var level=horizon+(Math.sin(t*0.3)*0.5+0.5)*(H*0.32)+H*0.05;
+    ctx.beginPath();
+    for(x=0;x<=W;x+=6){y=level+Math.sin(x*0.018+t*0.9)*7+Math.sin(x*0.05-t*0.6)*3;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
+    var g=ctx.createLinearGradient(0,level,0,H);g.addColorStop(0,'rgba(63,151,230,0.18)');g.addColorStop(1,'rgba(27,182,173,0.10)');ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();
+    for(x=0;x<=W;x+=6){y=level+Math.sin(x*0.018+t*0.9)*7+Math.sin(x*0.05-t*0.6)*3;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.strokeStyle='rgba(21,119,207,0.5)';ctx.lineWidth=1.6;ctx.stroke();
+  }
+  function draw(){
+    if(!W||!H)return;
+    var t=reduced?1.2:(performance.now()-start)/1000;
+    ctx.clearRect(0,0,W,H);
+    if(variant==='a')drawWaves(t);else if(variant==='b')drawCaustics(t);else drawTideLevel(t);
+  }
+  function resize(){
+    var dpr=Math.min(window.devicePixelRatio||1,2),rect=canvas.getBoundingClientRect();
+    W=rect.width;H=rect.height;canvas.width=Math.max(1,W*dpr);canvas.height=Math.max(1,H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);buildSeabed();draw();
+  }
+  function loop(){draw();if(!reduced)raf=requestAnimationFrame(loop);}
+  var btns=[].slice.call(document.querySelectorAll('.hero-switch button'));
+  btns.forEach(function(b){b.addEventListener('click',function(){variant=b.getAttribute('data-v');btns.forEach(function(x){x.classList.toggle('on',x===b);});draw();});});
+  window.addEventListener('resize',resize);
+  resize();loop();
+})();
+
+/* ---------- TRANSFER SCATTER (zero-shot vs single-network AUC) ---------- */
+(function(){
+  var svg=document.getElementById('scatter');if(!svg)return;
+  var NS='http://www.w3.org/2000/svg',g=document.getElementById('scatter-pts');
+  // plot box maps AUC 0..1 on both axes
+  var x0=64,x1=436,y0=268,y1=32,lo=0,hi=1;
+  function X(a){return x0+(a-lo)/(hi-lo)*(x1-x0);}
+  function Y(a){return y0+(a-lo)/(hi-lo)*(y1-y0);}
+  // (single-network AUC, multi-network zero-shot AUC) per network, from the paper's Table 5:
+  // TIDES = TIDES-sup -> TIDES-64 ; MiNT = HTGN -> MiNT-64
+  var tides=[[0.720,0.812],[0.481,0.526],[0.613,0.747],[0.511,0.721],[0.615,0.781],[0.677,0.733],[0.720,0.751],[0.954,0.325],[0.098,0.923],[0.466,0.706],[0.832,0.851],[0.493,0.684],[0.812,0.891],[0.619,0.691],[0.278,0.562],[0.403,0.638],[0.782,0.810],[0.750,0.786],[0.738,0.786],[0.798,0.774]];
+  var mint=[[0.745,0.845],[0.446,0.661],[0.574,0.582],[0.494,0.527],[0.717,0.689],[0.753,0.587],[0.746,0.722],[0.911,0.382],[0.493,0.893],[0.566,0.827],[0.561,0.618],[0.623,0.688],[0.761,0.818],[0.658,0.645],[0.378,0.492],[0.706,0.561],[0.679,0.780],[0.730,0.742],[0.733,0.762],[0.694,0.628]];
+  tides.forEach(function(p){var x=X(p[0]),y=Y(p[1]);var s=document.createElementNS(NS,'rect');s.setAttribute('x',(x-4).toFixed(1));s.setAttribute('y',(y-4).toFixed(1));s.setAttribute('width','8');s.setAttribute('height','8');s.setAttribute('rx','1.4');s.setAttribute('class','pt-t');s.setAttribute('fill','rgba(21,119,207,.72)');s.setAttribute('stroke','#fff');s.setAttribute('stroke-width','.8');g.appendChild(s);});
+  mint.forEach(function(p){var c=document.createElementNS(NS,'circle');c.setAttribute('cx',X(p[0]).toFixed(1));c.setAttribute('cy',Y(p[1]).toFixed(1));c.setAttribute('r','4.6');c.setAttribute('class','pt-m');c.setAttribute('fill','rgba(226,75,74,.6)');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','.8');g.appendChild(c);});
+  // ticks
+  [0,0.2,0.4,0.6,0.8,1.0].forEach(function(v){
+    var tx=document.createElementNS(NS,'text');tx.setAttribute('x',X(v));tx.setAttribute('y',282);tx.setAttribute('text-anchor','middle');tx.setAttribute('font-family','Space Mono,monospace');tx.setAttribute('font-size','8');tx.setAttribute('fill','var(--slate-2)');tx.textContent=v.toFixed(1);svg.appendChild(tx);
+    var ty=document.createElementNS(NS,'text');ty.setAttribute('x',56);ty.setAttribute('y',Y(v)+3);ty.setAttribute('text-anchor','end');ty.setAttribute('font-family','Space Mono,monospace');ty.setAttribute('font-size','8');ty.setAttribute('fill','var(--slate-2)');ty.textContent=v.toFixed(1);svg.appendChild(ty);
+  });
+  function show(mode){
+    g.querySelectorAll('.pt-t').forEach(function(e){e.style.display=(mode==='mint')?'none':'';});
+    g.querySelectorAll('.pt-m').forEach(function(e){e.style.display=(mode==='tides')?'none':'';});
+  }
+  var btns=[].slice.call(svg.parentNode.querySelectorAll('.fsw button'));
+  btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.toggle('on',x===b);});show(b.getAttribute('data-m'));});});
+  show('both');
+})();
+
+/* ---------- SCALING CURVE (mean zero-shot AUC vs pretraining size) ---------- */
+(function(){
+  var svg=document.getElementById('scaling');if(!svg)return;
+  var NS='http://www.w3.org/2000/svg';
+  var x0=72,x1=446,yb=244,yt=34,lo=0,hi=1;
+  function X(k){return x0+(Math.log(k)/Math.LN2-1)/5*(x1-x0);}   /* log2 axis, k in 2..64 */
+  function Y(a){return yb+(a-lo)/(hi-lo)*(yt-yb);}
+  function el(t,a){var e=document.createElementNS(NS,t),k;for(k in a)e.setAttribute(k,a[k]);return e;}
+  [0,0.2,0.4,0.6,0.8,1.0].forEach(function(v){
+    svg.appendChild(el('line',{x1:x0,y1:Y(v).toFixed(1),x2:x1,y2:Y(v).toFixed(1),stroke:'var(--line-soft)','stroke-width':1}));
+    var t=el('text',{x:x0-9,y:(Y(v)+3).toFixed(1),'text-anchor':'end','font-family':'Space Mono,monospace','font-size':8,fill:'var(--slate-2)'});t.textContent=v.toFixed(1);svg.appendChild(t);
+  });
+  [2,4,8,16,32,64].forEach(function(k){
+    var t=el('text',{x:X(k).toFixed(1),y:yb+18,'text-anchor':'middle','font-family':'Space Mono,monospace','font-size':9,fill:'var(--slate)'});t.textContent=k;svg.appendChild(t);
+  });
+  svg.appendChild(el('line',{x1:x0,y1:yt,x2:x0,y2:yb,stroke:'var(--line)','stroke-width':1.2}));
+  svg.appendChild(el('line',{x1:x0,y1:yb,x2:x1,y2:yb,stroke:'var(--line)','stroke-width':1.2}));
+  var xl=el('text',{x:((x0+x1)/2).toFixed(1),y:yb+34,'text-anchor':'middle','font-family':'Space Mono,monospace','font-size':9.5,fill:'var(--slate)'});xl.textContent='Number of token networks';svg.appendChild(xl);
+  var ym=((yt+yb)/2).toFixed(1);
+  var yl=el('text',{x:22,y:ym,'text-anchor':'middle','font-family':'Space Mono,monospace','font-size':9.5,fill:'var(--slate)',transform:'rotate(-90 22 '+ym+')'});yl.textContent='Mean zero-shot AUC';svg.appendChild(yl);
+  /* [k, mean, std] */
+  var T=[[2,0.706,0.09],[4,0.732,0.10],[8,0.697,0.10],[16,0.747,0.085],[32,0.749,0.08],[64,0.729,0.085]];
+  var M=[[4,0.593,0.12],[8,0.595,0.12],[16,0.637,0.115],[32,0.671,0.105],[64,0.672,0.10]];
+  function band(data,fill){
+    var d='',i;
+    for(i=0;i<data.length;i++)d+=(i?'L':'M')+X(data[i][0]).toFixed(1)+' '+Y(Math.min(1,data[i][1]+data[i][2])).toFixed(1)+' ';
+    for(i=data.length-1;i>=0;i--)d+='L'+X(data[i][0]).toFixed(1)+' '+Y(Math.max(0,data[i][1]-data[i][2])).toFixed(1)+' ';
+    svg.appendChild(el('path',{d:d+'Z',fill:fill,stroke:'none'}));
+  }
+  function line(data,color,dash){
+    var d='',i;for(i=0;i<data.length;i++)d+=(i?'L':'M')+X(data[i][0]).toFixed(1)+' '+Y(data[i][1]).toFixed(1)+' ';
+    var ln=el('path',{d:d,fill:'none',stroke:color,'stroke-width':2.2});if(dash)ln.setAttribute('stroke-dasharray','5 4');svg.appendChild(ln);
+  }
+  band(M,'rgba(226,75,74,.12)');band(T,'rgba(21,119,207,.13)');
+  line(M,'#e24b4a',true);line(T,'#1577cf',false);
+  M.forEach(function(d){svg.appendChild(el('rect',{x:(X(d[0])-3.4).toFixed(1),y:(Y(d[1])-3.4).toFixed(1),width:6.8,height:6.8,fill:'#e24b4a'}));});
+  T.forEach(function(d){svg.appendChild(el('circle',{cx:X(d[0]).toFixed(1),cy:Y(d[1]).toFixed(1),r:3.8,fill:'#1577cf'}));});
+  svg.appendChild(el('circle',{cx:x1-96,cy:yt+8,r:4,fill:'#1577cf'}));
+  var l1=el('text',{x:x1-86,y:yt+11,'font-family':'Space Mono,monospace','font-size':9,fill:'var(--slate)'});l1.textContent='TIDES';svg.appendChild(l1);
+  svg.appendChild(el('rect',{x:x1-46,y:yt+4,width:8,height:8,fill:'#e24b4a'}));
+  var l2=el('text',{x:x1-34,y:yt+11,'font-family':'Space Mono,monospace','font-size':9,fill:'var(--slate)'});l2.textContent='MiNT';svg.appendChild(l2);
+})();
+
+/* ---------- reveal ---------- */
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+  document.querySelectorAll('.fade').forEach(function(el){io.observe(el);});
+})();
+</script>
+
+<!-- KaTeX: native LaTeX rendering -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],
+      throwOnError:false
+    });
+  }
+</script>
+</body>
+</html>
