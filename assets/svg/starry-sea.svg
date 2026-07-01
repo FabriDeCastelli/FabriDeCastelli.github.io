@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 500" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="sea-title sea-desc">
+  <title id="sea-title">Starry sea</title>
+  <desc id="sea-desc">A calm sea under a starry sky with a low moon casting a shimmering reflection on gently moving waves.</desc>
+
+  <defs>
+    <linearGradient id="ss-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#03061f"/>
+      <stop offset="50%" stop-color="#0a1640"/>
+      <stop offset="100%" stop-color="#1e2c6a"/>
+    </linearGradient>
+    <linearGradient id="ss-sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a1a48"/>
+      <stop offset="50%" stop-color="#06112e"/>
+      <stop offset="100%" stop-color="#020613"/>
+    </linearGradient>
+    <radialGradient id="ss-moon" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="55%" stop-color="#fef6c8" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#fef6c8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ss-reflect" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef6c8" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#fef6c8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- sky -->
+  <rect width="1600" height="320" fill="url(#ss-sky)"/>
+
+  <!-- stars -->
+  <g fill="#ffffff">
+    <circle cx="80" cy="40" r="1.3"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.1s" repeatCount="indefinite"/></circle>
+    <circle cx="160" cy="90" r="1.0"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/></circle>
+    <circle cx="260" cy="50" r="1.6"><animate attributeName="opacity" values="0.2;1;0.2" dur="3.6s" repeatCount="indefinite"/></circle>
+    <circle cx="340" cy="130" r="1.1"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.8s" repeatCount="indefinite"/></circle>
+    <circle cx="440" cy="70" r="1.4"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="3.3s" repeatCount="indefinite"/></circle>
+    <circle cx="540" cy="40" r="1.2"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.1s" repeatCount="indefinite"/></circle>
+    <circle cx="640" cy="110" r="1.5"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.4s" repeatCount="indefinite"/></circle>
+    <circle cx="740" cy="60" r="1.0"><animate attributeName="opacity" values="0.2;1;0.2" dur="2.6s" repeatCount="indefinite"/></circle>
+    <circle cx="840" cy="140" r="1.3"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.0s" repeatCount="indefinite"/></circle>
+    <circle cx="940" cy="80" r="1.4"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.9s" repeatCount="indefinite"/></circle>
+    <circle cx="1040" cy="50" r="1.1"><animate attributeName="opacity" values="0.2;1;0.2" dur="3.7s" repeatCount="indefinite"/></circle>
+    <circle cx="1140" cy="100" r="1.5"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.3s" repeatCount="indefinite"/></circle>
+    <circle cx="1240" cy="40" r="1.2"><animate attributeName="opacity" values="0.4;1;0.4" dur="3.2s" repeatCount="indefinite"/></circle>
+    <circle cx="1340" cy="130" r="1.6"><animate attributeName="opacity" values="0.2;1;0.2" dur="2.7s" repeatCount="indefinite"/></circle>
+    <circle cx="1440" cy="70" r="1.0"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.5s" repeatCount="indefinite"/></circle>
+    <circle cx="1520" cy="110" r="1.3"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/></circle>
+  </g>
+
+  <!-- shooting star -->
+  <g>
+    <line x1="-100" y1="50" x2="-20" y2="90" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity="0.9">
+      <animate attributeName="opacity" values="0;1;0" dur="3s" begin="2s;k.end+9s" id="k"/>
+      <animateTransform attributeName="transform" type="translate"
+        values="0,0; 1800,300" dur="3s" begin="2s;k.end+9s" repeatCount="1"/>
+    </line>
+  </g>
+
+  <!-- moon -->
+  <circle cx="800" cy="220" r="60" fill="url(#ss-moon)"/>
+  <circle cx="800" cy="220" r="38" fill="#fef6c8"/>
+
+  <!-- sea -->
+  <rect y="300" width="1600" height="200" fill="url(#ss-sea)"/>
+
+  <!-- moon reflection on water -->
+  <g>
+    <ellipse cx="800" cy="320" rx="120" ry="6" fill="url(#ss-reflect)">
+      <animate attributeName="rx" values="120;140;120" dur="6s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="800" cy="345" rx="90" ry="4" fill="url(#ss-reflect)" opacity="0.85">
+      <animate attributeName="rx" values="90;110;90" dur="5s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="800" cy="370" rx="70" ry="3" fill="url(#ss-reflect)" opacity="0.7">
+      <animate attributeName="rx" values="70;88;70" dur="4.5s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="800" cy="395" rx="55" ry="2.5" fill="url(#ss-reflect)" opacity="0.55">
+      <animate attributeName="rx" values="55;70;55" dur="4s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="800" cy="425" rx="40" ry="2" fill="url(#ss-reflect)" opacity="0.4">
+      <animate attributeName="rx" values="40;55;40" dur="3.5s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- waves -->
+  <g fill="none" stroke="#dfe6ff" stroke-linecap="round">
+    <path stroke-width="0.8" opacity="0.55"
+      d="M0,330 Q100,326 200,330 T400,330 T600,330 T800,330 T1000,330 T1200,330 T1400,330 T1600,330">
+      <animate attributeName="d" dur="6s" repeatCount="indefinite"
+        values="
+          M0,330 Q100,326 200,330 T400,330 T600,330 T800,330 T1000,330 T1200,330 T1400,330 T1600,330;
+          M0,330 Q100,334 200,330 T400,330 T600,330 T800,330 T1000,330 T1200,330 T1400,330 T1600,330;
+          M0,330 Q100,326 200,330 T400,330 T600,330 T800,330 T1000,330 T1200,330 T1400,330 T1600,330"/>
+    </path>
+    <path stroke-width="0.7" opacity="0.45"
+      d="M0,360 Q120,355 240,360 T480,360 T720,360 T960,360 T1200,360 T1440,360 T1600,360">
+      <animate attributeName="d" dur="7s" repeatCount="indefinite"
+        values="
+          M0,360 Q120,355 240,360 T480,360 T720,360 T960,360 T1200,360 T1440,360 T1600,360;
+          M0,360 Q120,365 240,360 T480,360 T720,360 T960,360 T1200,360 T1440,360 T1600,360;
+          M0,360 Q120,355 240,360 T480,360 T720,360 T960,360 T1200,360 T1440,360 T1600,360"/>
+    </path>
+    <path stroke-width="0.6" opacity="0.35"
+      d="M0,400 Q140,395 280,400 T560,400 T840,400 T1120,400 T1400,400 T1600,400">
+      <animate attributeName="d" dur="8s" repeatCount="indefinite"
+        values="
+          M0,400 Q140,395 280,400 T560,400 T840,400 T1120,400 T1400,400 T1600,400;
+          M0,400 Q140,406 280,400 T560,400 T840,400 T1120,400 T1400,400 T1600,400;
+          M0,400 Q140,395 280,400 T560,400 T840,400 T1120,400 T1400,400 T1600,400"/>
+    </path>
+    <path stroke-width="0.5" opacity="0.25"
+      d="M0,445 Q160,440 320,445 T640,445 T960,445 T1280,445 T1600,445">
+      <animate attributeName="d" dur="9s" repeatCount="indefinite"
+        values="
+          M0,445 Q160,440 320,445 T640,445 T960,445 T1280,445 T1600,445;
+          M0,445 Q160,450 320,445 T640,445 T960,445 T1280,445 T1600,445;
+          M0,445 Q160,440 320,445 T640,445 T960,445 T1280,445 T1600,445"/>
+    </path>
+  </g>
+</svg>

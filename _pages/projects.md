@@ -12,7 +12,7 @@ author_profile: true
 <div class="list__item">
   <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
     <h2 class="archive__item-title" itemprop="headline">
-      <a href="{{ base_path }}/projects/LAMP/">LAMP &mdash; Long-range Adaptive Memory Propagation</a>
+      <a href="{{ base_path }}/projects/LAMP/">LAMP: Long-range Adaptive Memory Propagation</a>
     </h2>
     <p class="archive__item-excerpt" itemprop="description">
       An interactive companion to our ICML 2026 spotlight: a differential-equation GNN

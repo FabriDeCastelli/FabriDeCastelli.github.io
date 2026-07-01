@@ -210,32 +210,35 @@ footer{margin-top:60px;border-top:1px solid var(--line-soft);background:var(--bg
       <p class="lead">When sequence models and GNNs are trained jointly, every shared parameter is exposed to conflicting spatio-temporal patterns and is forced to encode domain identity to fit them. This produces a leakage channel that scales poorly with corpus diversity and leads to negative transfer under heterogeneous domain shifts. We argue that this failure is in part structural, and that the two sources of variation should be treated as separable.</p>
     </div>
     <div style="order:2">
-      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 1 · ENTANGLED SIGNAL</div>
-        <svg viewBox="0 0 480 300" aria-label="A temporal signal entangled with a graph structure">
-          <!-- graph structure -->
-          <g stroke="rgba(90,135,170,.34)" stroke-width="1.3">
-            <line x1="95" y1="150" x2="160" y2="200"/>
-            <line x1="95" y1="150" x2="225" y2="135"/>
-            <line x1="160" y1="200" x2="290" y2="195"/>
-            <line x1="225" y1="135" x2="290" y2="195"/>
-            <line x1="225" y1="135" x2="355" y2="140"/>
-            <line x1="290" y1="195" x2="415" y2="185"/>
-            <line x1="355" y1="140" x2="415" y2="185"/>
+      <div class="figcard"><div class="fglow"></div><div class="figlabel">FIG 1 · ENTANGLED DYNAMICS</div>
+        <svg viewBox="0 0 480 300" aria-label="Time and space entangled inside the shared parameters of a jointly trained model">
+          <defs>
+            <linearGradient id="f1mix" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#1577cf"/><stop offset="1" stop-color="#1bb6ad"/>
+            </linearGradient>
+            <marker id="f1ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--slate-2)"/></marker>
+          </defs>
+          <!-- time input -->
+          <text x="42" y="96" font-family="Space Mono,monospace" font-size="10" font-weight="700" fill="var(--azure)">time</text>
+          <path d="M40 112 C 54 100, 66 124, 80 112 S 104 100, 118 114" fill="none" stroke="var(--azure)" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- space input -->
+          <text x="42" y="224" font-family="Space Mono,monospace" font-size="10" font-weight="700" fill="var(--slate)">space</text>
+          <g stroke="rgba(90,135,170,.6)" stroke-width="1.3"><line x1="52" y1="194" x2="86" y2="208"/><line x1="86" y1="208" x2="116" y2="192"/><line x1="52" y1="194" x2="116" y2="192"/></g>
+          <g fill="rgba(60,120,170,.7)"><circle cx="52" cy="194" r="3.6"/><circle cx="86" cy="208" r="3.6"/><circle cx="116" cy="192" r="3.6"/></g>
+          <!-- arrows into the shared model -->
+          <g fill="none" stroke="var(--slate-2)" stroke-width="1.4">
+            <path d="M122 112 C 146 112, 146 140, 164 140" marker-end="url(#f1ah)"/>
+            <path d="M118 196 C 146 196, 146 174, 164 174" marker-end="url(#f1ah)"/>
           </g>
-          <g fill="rgba(60,120,170,.62)">
-            <circle cx="95" cy="150" r="5"/><circle cx="160" cy="200" r="5"/><circle cx="225" cy="135" r="5"/>
-            <circle cx="290" cy="195" r="5"/><circle cx="355" cy="140" r="5"/><circle cx="415" cy="185" r="5"/>
-          </g>
-          <!-- entangled temporal signals weaving through the structure -->
-          <path d="M44 142 C 110 86, 168 202, 238 142 S 364 82, 446 150" fill="none" stroke="var(--azure)" stroke-width="2.6" opacity=".92" stroke-linecap="round"/>
-          <path d="M44 172 C 122 226, 186 104, 256 174 S 382 226, 446 146" fill="none" stroke="var(--aqua)" stroke-width="2.2" opacity=".8" stroke-linecap="round"/>
-          <!-- legend -->
-          <g font-family="Space Mono,monospace" font-size="10">
-            <line x1="62" y1="262" x2="86" y2="262" stroke="var(--azure)" stroke-width="2.6" stroke-linecap="round"/>
-            <text x="94" y="266" fill="var(--slate)">temporal signal</text>
-            <circle cx="256" cy="262" r="4.5" fill="rgba(60,120,170,.62)"/>
-            <text x="268" y="266" fill="var(--slate)">graph structure</text>
-          </g>
+          <!-- shared-parameters box with two strands woven together -->
+          <rect x="164" y="96" width="154" height="108" rx="10" fill="var(--bg-2)" stroke="var(--line)"/>
+          <text x="241" y="115" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" letter-spacing=".06em" fill="var(--slate-2)">SHARED PARAMETERS</text>
+          <path d="M176 142 C 197 142, 197 178, 218 178 C 240 178, 240 142, 261 142 C 283 142, 283 178, 304 178" fill="none" stroke="var(--azure)" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M176 178 C 197 178, 197 142, 218 142 C 240 142, 240 178, 261 178 C 283 178, 283 142, 304 142" fill="none" stroke="var(--slate)" stroke-width="2.4" stroke-linecap="round"/>
+          <!-- entangled output -->
+          <path d="M318 158 L 356 158" fill="none" stroke="var(--slate-2)" stroke-width="1.4" marker-end="url(#f1ah)"/>
+          <circle cx="380" cy="158" r="13" fill="url(#f1mix)" stroke="#fff" stroke-width="1.5"/>
+          <text x="380" y="190" text-anchor="middle" font-family="Space Mono,monospace" font-size="9.5" fill="var(--slate)">entangled</text>
         </svg>
       </div>
     </div>

@@ -11,7 +11,7 @@ locale                   : "en-US"
 site_theme               : "default" # Currently available options are "default", "air"
 title                    : "Fabrizio De Castelli"
 title_separator          : "-"
-name                     : &name "Dr. Fabrizio De Castelli"
+name                     : &name "Fabrizio De Castelli"
 description              : &description "PhD Student at University of Pisa"   # Update this with a general description of your site, this is the default if not overridden by a page
 url                      : https://fabridecastelli.github.io # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io",
                                                            # or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"

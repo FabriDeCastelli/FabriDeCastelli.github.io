@@ -9,11 +9,14 @@ redirect_from:
 
 {% include base_path %}
 
+<a href="{{ base_path }}/files/cv.pdf" class="btn btn--info"><i class="fas fa-download" aria-hidden="true"></i> Download PDF version</a>
+
 ---
 
 ## Education
 * **Ph.D. in Computer Science**, [University of Pisa](https://www.unipi.it) — *Nov 2025 – Present*  
   *Supervisor: [Prof. Davide Bacciu](https://pages.di.unipi.it/bacciu/)*  
+  *Co-Supervisor: [Dr. Alessio Gravina](https://pages.di.unipi.it/gravina/)*  
 
 * **M.Sc. in Computer Science**, [University of Pisa](https://www.unipi.it) — *Jan 2024 – Oct 2025*  
   *Final Grade:* **110/110 *cum laude*** (Highest Honors)  
@@ -34,6 +37,18 @@ redirect_from:
 
 ---
 
+## Publications
+
+* **"Adaptive Memory Retention in Dynamic Graphs"**  
+  **F. De Castelli**, A. Gravina, M. Eliasof, C.-B. Schönlieb, D. Bacciu  
+  *ICML 2026 (Spotlight)* · [Interactive demo](/projects/LAMP/)
+
+* **"Disentangling Dynamics: A Compositional Framework for Temporal Graph Foundation Models"**  
+  **F. De Castelli**, A. Gravina, D. Bacciu, M. Eliasof  
+  *Graph Foundation Models Workshop @ ICML 2026* · [Interactive demo](/projects/TIDES/)
+
+---
+
 ## Work Experience
 
 * **Software Developer**, [Industrial Software srl](https://industrialsoftware.it) — *Jan – Feb 2019*  
@@ -47,10 +62,24 @@ redirect_from:
 
 ---
 
+## Teaching & Supervision
+
+<!-- TODO: list supervised theses, interns, or teaching-assistant roles. Remove this section if not applicable. -->
+* **Student Name**, BSc/MSc thesis on *Topic* (University of Pisa, 2026). Co-supervised with [Prof. Name](#).
+* **Teaching Assistant**, *Course Name*, University of Pisa (2026).
+
+---
+
 ## Talks
 
-* **Graphs in Motion: Learning from the Pulse of Dynamical Systems**  
-  Presented at [ETH Zürich](https://ethz.ch), VIScon Symposium — *Oct 2025*
+* **"Dynamic Graphs: The Long-Range Challenge"**  
+  Pesaresi Seminars, [University of Pisa](https://www.unipi.it) (Mar 2026)
+
+* **"Understanding and Improving Laplacian Positional Encodings for Temporal GNNs"** ([arXiv:2506.01596](https://arxiv.org/abs/2506.01596))  
+  Bring Your Lunch Talks (BYLT) seminar, [University of Pisa](https://www.unipi.it) (Mar 2026)
+
+* **"Graphs in Motion: Learning from the Pulse of Dynamical Systems"**  
+  VIScon Symposium, [ETH Zürich](https://ethz.ch) (Oct 2025)
 
 ---
 
